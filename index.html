@@ -211,6 +211,8 @@ body.light .badge-warn{color:#8a5d00}
 .hide{display:none!important}
 .menu-item{display:flex;align-items:center;gap:.7rem;padding:.85rem .6rem;border-radius:12px;cursor:pointer;font-weight:600;font-size:.92rem;transition:.12s}
 .menu-item:active{background:var(--surface2)} .menu-item i{font-size:1.25rem;color:var(--blue);width:24px;text-align:center}
+.cloud-status{font-size:.8rem;font-weight:600;color:var(--muted);margin-bottom:.7rem;min-height:1em}
+.cloud-status.ok{color:var(--green)} .cloud-status.warn{color:var(--danger)}
 .menu-item small{display:block;font-size:.7rem;color:var(--muted);font-weight:500}
 
 /* emoji picker */
@@ -375,9 +377,25 @@ body.light .badge-warn{color:#8a5d00}
   </div>
 
   <!-- modal ajustes -->
+  <div class="overlay" id="ovCloud">
+    <div class="modal">
+      <h3><i class="ti ti-cloud"></i> Sincronização</h3>
+      <div id="cloudStatus" class="cloud-status">Não conectado</div>
+      <div id="cloudForm">
+        <div class="fg"><label>E-mail</label><input id="cEmail" type="email" autocomplete="email" placeholder="voce@email.com"></div>
+        <div class="fg"><label>Senha</label><input id="cPass" type="password" autocomplete="current-password" placeholder="mín. 6 caracteres"></div>
+        <div class="frow" style="gap:.5rem"><button class="btn" style="flex:1" onclick="cloudLogin()">Entrar</button><button class="btn btn-ghost" style="flex:1" onclick="cloudSignup()">Criar conta</button></div>
+        <div class="hint" style="margin-top:.5rem;opacity:.8">Mesma conta no iPhone e no Mac = mesmo histórico, com backup na nuvem.</div>
+      </div>
+      <div class="menu-item" id="cloudOut" onclick="cloudLogout()" style="display:none;margin-top:.4rem"><i class="ti ti-logout"></i><div>Sair da conta<small>Mantém os dados locais</small></div></div>
+      <div class="mfoot" style="margin-top:.6rem"><button class="btn btn-ghost" onclick="closeOv('ovCloud')">Fechar</button></div>
+    </div>
+  </div>
+
   <div class="overlay" id="ovMenu">
     <div class="modal">
       <h3><i class="ti ti-settings"></i> Ajustes</h3>
+      <div class="menu-item" onclick="openCloud()"><i class="ti ti-cloud"></i><div>Conta & sincronização<small id="cloudMenuSub">Backup e sync entre aparelhos</small></div></div>
       <div class="menu-item" onclick="exportJSON()"><i class="ti ti-download"></i><div>Exportar JSON<small>Backup de hábitos e registros</small></div></div>
       <div class="menu-item" onclick="document.getElementById('fileImp').click()"><i class="ti ti-upload"></i><div>Importar JSON<small>Restaura de um backup</small></div></div>
       <div class="menu-item" onclick="carregarModelo()"><i class="ti ti-sparkles"></i><div>Carregar 37 hábitos<small>Modelo do HUB · substitui os atuais</small></div></div>
@@ -474,7 +492,9 @@ function save(){try{
   localStorage.setItem(LS+'logs',JSON.stringify(logs));
   localStorage.setItem(LS+'counter',String(counter));
   localStorage.setItem(LS+'theme',document.body.classList.contains('light')?'light':'dark');
-}catch(e){toast('⚠️ Não consegui salvar (armazenamento bloqueado)');}}
+}catch(e){toast('⚠️ Não consegui salvar (armazenamento bloqueado)');}
+try{localStorage.setItem(LS+'dirty','1');}catch(e){}
+if(CLOUD_ON&&cloudUser&&!pulling)cloudPushAll();}
 function load(){try{
   var h=localStorage.getItem(LS+'habits');
   if(h){habits=JSON.parse(h)||[];logs=JSON.parse(localStorage.getItem(LS+'logs')||'{}');}
@@ -1118,13 +1138,58 @@ function openOv(id){document.getElementById(id).classList.add('show');}
 function closeOv(id){document.getElementById(id).classList.remove('show');}
 function openMenu(){openOv('ovMenu');}
 
+/* ===== NUVEM (Supabase) — camada opcional, offline-first =====
+   Para ligar: cole sua Project URL e a anon public key abaixo. */
+var SUPABASE_URL='https://jlouesrrmqeauzlgvrpw.supabase.co';   /* << cole aqui: https://xxxx.supabase.co */
+var SUPABASE_ANON='sb_publishable_ulG1woVG1p1Seax63GGYPQ_PG6-8l-G';  /* << cole aqui: a chave anon/publishable */
+var CLOUD_ON=!!(SUPABASE_URL&&SUPABASE_ANON);
+var sb=null,cloudUser=null,syncT=null,pulling=false;
+function cloudSet(msg,cls){var e=document.getElementById('cloudStatus');if(e){e.textContent=msg;e.className='cloud-status '+(cls||'');}var s=document.getElementById('cloudMenuSub');if(s)s.textContent=cloudUser?('Conectado: '+cloudUser.email):(CLOUD_ON?'Backup e sync entre aparelhos':'Não configurado neste arquivo');cloudRefreshUI();}
+function cloudRefreshUI(){var f=document.getElementById('cloudForm'),o=document.getElementById('cloudOut');if(f)f.style.display=cloudUser?'none':'block';if(o)o.style.display=cloudUser?'flex':'none';}
+function loadSb(cb){if(window.supabase&&window.supabase.createClient){cb();return;}var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';s.onload=cb;s.onerror=function(){cloudSet('sem conexão com a nuvem — seguindo offline','warn');};document.head.appendChild(s);}
+function cloudInit(){if(!CLOUD_ON)return;loadSb(function(){try{sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON);}catch(e){cloudSet('falha ao iniciar a nuvem','warn');return;}sb.auth.getSession().then(function(r){var sess=r&&r.data&&r.data.session;if(sess&&sess.user){cloudUser=sess.user;cloudSet('Conectado: '+cloudUser.email,'ok');cloudSync();}else cloudSet('Não conectado','');});});}
+function cloudSync(){var dirty=false;try{dirty=localStorage.getItem(LS+'dirty')==='1';}catch(e){}if(dirty)cloudPushAll(true);else cloudPull();}
+function cloudPull(){
+  if(!sb||!cloudUser)return;pulling=true;cloudSet('Sincronizando…','');
+  sb.from('foco_state').select('key,value').eq('user_id',cloudUser.id).then(function(r){
+    pulling=false;
+    if(r.error){cloudSet('Erro ao sincronizar: '+r.error.message,'warn');return;}
+    var rows=r.data||[];
+    if(!rows.length){cloudPushAll(true);cloudSet('Conectado: '+cloudUser.email+' · enviei seus dados','ok');return;}
+    var map={};rows.forEach(function(x){map[x.key]=x.value;});
+    if(map.habits)habits=map.habits;
+    if(map.logs)logs=map.logs;
+    if(map.counter!=null)counter=+map.counter;
+    if(map.theme)applyTheme(map.theme);
+    try{localStorage.setItem(LS+'habits',JSON.stringify(habits));localStorage.setItem(LS+'logs',JSON.stringify(logs));localStorage.setItem(LS+'counter',String(counter));localStorage.removeItem(LS+'dirty');}catch(e){}
+    migrate();normalizeGrouped();recount();
+    cloudSet('Conectado: '+cloudUser.email,'ok');
+    setTab(tab||'foco');
+  });
+}
+function cloudPushAll(now){
+  if(!sb||!cloudUser)return;clearTimeout(syncT);
+  syncT=setTimeout(function(){
+    var t=new Date().toISOString(),uid=cloudUser.id;
+    var rows=[{user_id:uid,key:'habits',value:habits,updated_at:t},{user_id:uid,key:'logs',value:logs,updated_at:t},{user_id:uid,key:'counter',value:counter,updated_at:t},{user_id:uid,key:'theme',value:document.body.classList.contains('light')?'light':'dark',updated_at:t}];
+    cloudSet('Salvando na nuvem…','');
+    sb.from('foco_state').upsert(rows,{onConflict:'user_id,key'}).then(function(r){if(!r.error){try{localStorage.removeItem(LS+'dirty');}catch(e){}}cloudSet(r.error?('Erro ao salvar: '+r.error.message):('Conectado: '+cloudUser.email+' · salvo'),r.error?'warn':'ok');});
+  },now?100:1500);
+}
+function cloudLogin(){if(!sb){cloudSet('Nuvem ainda carregando…','');return;}var em=(document.getElementById('cEmail').value||'').trim(),pw=document.getElementById('cPass').value||'';if(!em||!pw){cloudSet('Preencha e-mail e senha','warn');return;}cloudSet('Entrando…','');sb.auth.signInWithPassword({email:em,password:pw}).then(function(r){if(r.error){cloudSet('Falhou: '+r.error.message,'warn');return;}cloudUser=r.data.user;cloudSet('Conectado: '+cloudUser.email,'ok');cloudSync();});}
+function cloudSignup(){if(!sb){cloudSet('Nuvem ainda carregando…','');return;}var em=(document.getElementById('cEmail').value||'').trim(),pw=document.getElementById('cPass').value||'';if(!em||pw.length<6){cloudSet('Senha de 6+ caracteres','warn');return;}cloudSet('Criando conta…','');sb.auth.signUp({email:em,password:pw}).then(function(r){if(r.error){cloudSet('Falhou: '+r.error.message,'warn');return;}if(r.data.session){cloudUser=r.data.user;cloudSet('Conectado: '+cloudUser.email,'ok');cloudSync();}else cloudSet('Conta criada — confirme o e-mail e clique Entrar','ok');});}
+function cloudLogout(){if(!sb)return;sb.auth.signOut().then(function(){cloudUser=null;cloudSet('Não conectado','');toast('Saiu da conta (dados locais mantidos)');});}
+function openCloud(){closeOv('ovMenu');if(!CLOUD_ON){toast('Nuvem não configurada neste arquivo');return;}cloudRefreshUI();openOv('ovCloud');}
+
 /* boot */
 load();
 var _ch=migrate();
 if(normalizeGrouped())_ch=true;
 recount();
 if(_ch)save();
+try{localStorage.removeItem(LS+'dirty');}catch(e){}
 setTab('foco');
+cloudInit();
 </script>
 </body>
 </html>
