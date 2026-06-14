@@ -970,7 +970,7 @@ function renderSemana(){
         sub=ev?(cs.cur+' dia'+(cs.cur===1?'':'s')+' sem'+(teto>0?' · '+rel+'/'+teto+' deslize'+(teto===1?'':'s'):'')):(h.alvo?metaLine(h):((h.tipo==='numero'||isQty(h))?(fmt(cur)+(h.unidade?' '+esc(h.unidade):'')):(cur+' dias'))),
         pct=ev?(teto>0?Math.max(0,Math.round((teto-rel)/teto*100)):0):(h.alvo?Math.min(100,Math.round(cur/h.alvo*100)):0),
         barCol=ev?'var(--green)':h.cor,
-        pips=wk.map(function(d){var ds=dstr(d),on=doneOn(h,ds),rl=ev&&relapseOn(h,ds);return '<div class="wk-pip'+(on?' on':'')+(ds===tod?' today':'')+'" style="'+(on?'background:'+h.cor+';border-color:'+h.cor:(rl?'background:var(--danger);border-color:var(--danger)':''))+'"></div>';}).join('');
+        pips=wk.map(function(d){var ds=dstr(d),on=doneOn(h,ds),rl=ev&&relapseOn(h,ds);var st=rl?('background:'+rgba('#e5544b',.85)+';border-color:'+rgba('#e5544b',.85)):(on?(ev?('background:'+rgba(h.cor,.3)+';border-color:'+rgba(h.cor,.55)):('background:'+h.cor+';border-color:'+h.cor)):'');return '<div class="wk-pip'+(on?' on':'')+(ds===tod?' today':'')+'" style="'+st+'"></div>';}).join('');
     out+='<div class="wk-card"><div class="wk-top"><div class="wk-ic" style="background:'+rgba(h.cor,.16)+'">'+(h.icon||'•')+'</div><div class="wk-nm">'+esc(h.nome)+'</div>'+(lateBadge(h)?'<span class="badge-warn">atenção</span>':'')+'</div>'
       +'<div class="wk-sub">'+(sub||'—')+'</div><div class="bar"><i style="width:'+pct+'%;background:'+barCol+'"></i></div>'
       +'<div class="wk-pips">'+pips+'</div></div>';
@@ -985,11 +985,16 @@ function renderMes(){
   var marks=[1,5,10,15,20,25,30],colh='<div class="hm-row hm-head"><div class="hm-lbl"></div><div class="hm-cells">';
   for(var c=1;c<=dim;c++)colh+='<div class="hm-cn">'+(marks.indexOf(c)>=0?c:'')+'</div>';
   colh+='</div></div>';
-  var rows='';
+  var rows='',ti=dayIdx(tod);
   habits.forEach(function(h){
-    var cells='';
-    for(var d=1;d<=dim;d++){var ds=y+'-'+String(mo+1).padStart(2,'0')+'-'+String(d).padStart(2,'0'),on=doneOn(h,ds);
-      cells+='<div class="hm-cell'+(on?' on':'')+(ds===tod?' today':'')+'" style="'+(on?'background:'+h.cor+';border-color:'+h.cor:'')+'" title="'+esc(h.nome)+' · dia '+d+(on?' ✓':'')+'" onclick="mapTip(\''+esc(h.nome).replace(/'/g,'')+'\','+d+','+(on?'true':'false')+')"></div>';}
+    var cells='',ev=isEvitar(h),since=ev?evtSince(h):0;
+    for(var d=1;d<=dim;d++){var ds=y+'-'+String(mo+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+      var sty='',done=false,extra='';
+      if(ev){var di=dayIdx(ds);
+        if(relapseOn(h,ds)){sty='background:'+rgba('#e5544b',.85)+';border-color:'+rgba('#e5544b',.85);extra=' deslize';}
+        else if(di>=since&&di<=ti){sty='background:'+rgba(h.cor,.3)+';border-color:'+rgba(h.cor,.55);done=true;extra=' limpo';}
+      }else if(doneOn(h,ds)){sty='background:'+h.cor+';border-color:'+h.cor;done=true;extra=' ✓';}
+      cells+='<div class="hm-cell'+(ds===tod?' today':'')+'" style="'+sty+'" title="'+esc(h.nome)+' · dia '+d+extra+'" onclick="mapTip(\''+esc(h.nome).replace(/'/g,'')+'\','+d+','+(done?'true':'false')+')"></div>';}
     rows+='<div class="hm-row"><div class="hm-lbl"><span class="hm-ic">'+(h.icon||'•')+'</span><span class="hm-nm">'+esc(h.nome)+'</span></div><div class="hm-cells">'+cells+'</div></div>';
   });
   return '<div class="hb-intro">Toque uma caixinha pra ver o dia. Role na horizontal →</div>'+head+'<div class="hm-scroll"><div class="hm">'+colh+rows+'</div></div>';
@@ -1581,8 +1586,8 @@ function cloudPushAll(now){
     sb.from('foco_state').upsert(rows,{onConflict:'user_id,key'}).then(function(r){if(!r.error){try{localStorage.removeItem(LS+'dirty');}catch(e){}}cloudSet(r.error?('Erro ao salvar: '+r.error.message):('Conectado: '+cloudUser.email+' · salvo'),r.error?'warn':'ok');});
   },now?100:1500);
 }
-function cloudLogin(){if(!sb){cloudSet('Nuvem ainda carregando…','');return;}var em=(document.getElementById('cEmail').value||'').trim(),pw=document.getElementById('cPass').value||'';if(!em||!pw){cloudSet('Preencha e-mail e senha','warn');return;}cloudSet('Entrando…','');sb.auth.signInWithPassword({email:em,password:pw}).then(function(r){if(r.error){cloudSet('Falhou: '+r.error.message,'warn');return;}cloudUser=r.data.user;cloudSet('Conectado: '+cloudUser.email,'ok');cloudSync();});}
-function cloudSignup(){if(!sb){cloudSet('Nuvem ainda carregando…','');return;}var em=(document.getElementById('cEmail').value||'').trim(),pw=document.getElementById('cPass').value||'';if(!em||pw.length<6){cloudSet('Senha de 6+ caracteres','warn');return;}cloudSet('Criando conta…','');sb.auth.signUp({email:em,password:pw}).then(function(r){if(r.error){cloudSet('Falhou: '+r.error.message,'warn');return;}if(r.data.session){cloudUser=r.data.user;cloudSet('Conectado: '+cloudUser.email,'ok');cloudSync();}else cloudSet('Conta criada — confirme o e-mail e clique Entrar','ok');});}
+function cloudLogin(){if(!sb){cloudSet('Nuvem ainda carregando…','');return;}var em=(document.getElementById('cEmail').value||'').trim(),pw=document.getElementById('cPass').value||'';if(!em||!pw){cloudSet('Preencha e-mail e senha','warn');return;}cloudSet('Entrando…','');sb.auth.signInWithPassword({email:em,password:pw}).then(function(r){if(r.error){cloudSet('Falhou: '+r.error.message,'warn');return;}cloudUser=r.data.user;try{localStorage.removeItem(LS+'dirty');}catch(e){}cloudSet('Conectado: '+cloudUser.email,'ok');cloudPull();});}
+function cloudSignup(){if(!sb){cloudSet('Nuvem ainda carregando…','');return;}var em=(document.getElementById('cEmail').value||'').trim(),pw=document.getElementById('cPass').value||'';if(!em||pw.length<6){cloudSet('Senha de 6+ caracteres','warn');return;}cloudSet('Criando conta…','');sb.auth.signUp({email:em,password:pw}).then(function(r){if(r.error){cloudSet('Falhou: '+r.error.message,'warn');return;}if(r.data.session){cloudUser=r.data.user;cloudSet('Conectado: '+cloudUser.email,'ok');cloudPull();}else cloudSet('Conta criada — confirme o e-mail e clique Entrar','ok');});}
 function cloudLogout(){if(!sb)return;sb.auth.signOut().then(function(){cloudUser=null;cloudSet('Não conectado','');toast('Saiu da conta (dados locais mantidos)');});}
 function openCloud(){closeOv('ovMenu');if(!CLOUD_ON){toast('Nuvem não configurada neste arquivo');return;}cloudRefreshUI();openOv('ovCloud');}
 
