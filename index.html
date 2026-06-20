@@ -17,8 +17,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#1a1a2e;--surface:#12192a;--surface2:#1e2330;--border:#1e2d45;
-  --text:#e0e0e0;--muted:#7a8fa6;--blue:#185FA5;--blue2:#0d3d6b;
+  --bg:#262522;--surface:#1c1b19;--surface2:#322f2b;--border:#3a3733;
+  --text:#ece9e3;--muted:#9c958b;--blue:#185FA5;--blue2:#0d3d6b;
   --danger:#e0556b;--green:#5aa469;
 }
 body.light{
@@ -29,7 +29,7 @@ body.light{
 html,body{height:100%}
 body{
   font-family:'Manrope',system-ui,sans-serif;color:var(--text);
-  background:radial-gradient(900px 600px at 50% -10%,rgba(24,95,165,.28),transparent 60%),radial-gradient(700px 500px at 100% 110%,rgba(13,61,107,.35),transparent 55%),#0a0e1a;
+  background:radial-gradient(900px 600px at 50% -10%,rgba(255,255,255,.04),transparent 60%),radial-gradient(700px 500px at 100% 110%,rgba(255,255,255,.025),transparent 55%),#161513;
   display:flex;align-items:center;justify-content:center;padding:14px;
 }
 body.light{background:radial-gradient(900px 600px at 50% -10%,rgba(24,95,165,.18),transparent 60%),radial-gradient(700px 500px at 100% 110%,rgba(13,61,107,.12),transparent 55%),#c9d3e0}
@@ -41,7 +41,9 @@ body.copa{background:radial-gradient(900px 600px at 50% -10%,rgba(0,156,59,.16),
 body.copa .phone{box-shadow:0 0 0 8px #2a3344,0 30px 70px rgba(0,0,0,.35)}
 .flag-br{display:none;margin-left:.4rem;line-height:0}
 body.copa .flag-br{display:inline-flex;align-items:center;vertical-align:middle}
-.flag-br .br-flag{height:16px;width:auto;border-radius:2px;box-shadow:0 1px 2px rgba(0,0,0,.35)}
+.flag-br .br-flag{height:22px;width:auto;border-radius:2px;box-shadow:0 1px 2px rgba(0,0,0,.35)}
+body.dark .statusbar{background:#1c1b19}
+body.dark .appbar{background:linear-gradient(135deg,#2a2926,#37352f);box-shadow:0 4px 14px rgba(0,0,0,.45)}
 
 .phone{
   width:min(100%,392px);height:min(94vh,840px);background:var(--bg);border-radius:38px;
