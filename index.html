@@ -33,6 +33,14 @@ body{
   display:flex;align-items:center;justify-content:center;padding:14px;
 }
 body.light{background:radial-gradient(900px 600px at 50% -10%,rgba(24,95,165,.18),transparent 60%),radial-gradient(700px 500px at 100% 110%,rgba(13,61,107,.12),transparent 55%),#c9d3e0}
+body.copa{
+  --bg:#04331a;--surface:#0a4427;--surface2:#0e5230;--border:#15703f;
+  --text:#fdfbe7;--muted:#a9cf9e;--blue:#009c3b;--blue2:#00471f;--green:#22c55e;
+}
+body.copa{background:radial-gradient(900px 600px at 50% -10%,rgba(255,223,0,.20),transparent 60%),radial-gradient(700px 500px at 100% 110%,rgba(0,39,118,.30),transparent 55%),#03260f}
+body.copa .phone{box-shadow:0 0 0 8px #0a3d22,0 30px 70px rgba(0,0,0,.5)}
+.flag-br{display:none;margin-left:.35rem}
+body.copa .flag-br{display:inline}
 
 .phone{
   width:min(100%,392px);height:min(94vh,840px);background:var(--bg);border-radius:38px;
@@ -345,7 +353,7 @@ body.light .badge-warn{color:#8a5d00}
   <div class="appbar">
     <div class="appbar-top">
       <div class="appbar-ic" id="themeBtn" title="Tema"><i class="ti ti-moon" id="themeIc"></i></div>
-      <div class="appbar-tt"><b>Habit Tracker</b><span>modo Foco · teste</span></div>
+      <div class="appbar-tt"><b>Habit Tracker<span class="flag-br">🇧🇷</span></b><span>modo Foco · teste</span></div>
       <div class="appbar-ic" onclick="openCloud()" title="Sincronização" id="syncBtn"><i class="ti ti-cloud" id="syncIc"></i></div>
       <div class="appbar-ic" onclick="openMenu()" title="Ajustes"><i class="ti ti-settings"></i></div>
     </div>
@@ -533,8 +541,9 @@ function tick(){document.getElementById('clock').textContent=new Date().toLocale
 tick();setInterval(tick,15000);
 
 /* ===== tema ===== */
-function applyTheme(t){var l=t==='light';document.body.classList.toggle('light',l);document.body.classList.toggle('dark',!l);document.getElementById('themeIc').className=l?'ti ti-sun':'ti ti-moon';}
-document.getElementById('themeBtn').onclick=function(){var l=!document.body.classList.contains('light');applyTheme(l?'light':'dark');save();};
+function applyTheme(t){if(t!=='light'&&t!=='copa')t='dark';document.body.classList.remove('light','dark','copa');document.body.classList.add(t);var ic={dark:'ti ti-moon',light:'ti ti-sun',copa:'ti ti-trophy'};document.getElementById('themeIc').className=ic[t];}
+function curTheme(){var c=document.body.classList;return c.contains('copa')?'copa':c.contains('light')?'light':'dark';}
+document.getElementById('themeBtn').onclick=function(){var seq=['dark','light','copa'];applyTheme(seq[(seq.indexOf(curTheme())+1)%seq.length]);save();};
 
 /* ===== toast ===== */
 var _tt;function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(_tt);_tt=setTimeout(function(){t.classList.remove('show');},1900);}
@@ -638,7 +647,7 @@ function save(){try{
   localStorage.setItem(LS+'habits',JSON.stringify(habits));
   localStorage.setItem(LS+'logs',JSON.stringify(logs));
   localStorage.setItem(LS+'counter',String(counter));
-  localStorage.setItem(LS+'theme',document.body.classList.contains('light')?'light':'dark');
+  localStorage.setItem(LS+'theme',curTheme());
 }catch(e){toast('⚠️ Não consegui salvar (armazenamento bloqueado)');}
 try{localStorage.setItem(LS+'dirty','1');}catch(e){}
 if(CLOUD_ON&&cloudUser&&!pulling)cloudPushAll();updateSync();}
@@ -1572,7 +1581,7 @@ function excluirHabito(){
 
 /* ===== export / import ===== */
 function exportJSON(){
-  var data={app:'foco-habit',version:1,exportedAt:new Date().toISOString(),theme:document.body.classList.contains('light')?'light':'dark',counter:counter,habits:habits,logs:logs};
+  var data={app:'foco-habit',version:1,exportedAt:new Date().toISOString(),theme:curTheme(),counter:counter,habits:habits,logs:logs};
   var blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
   var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='foco-backup-'+today()+'.json';document.body.appendChild(a);a.click();a.remove();
   closeOv('ovMenu');toast('Backup exportado ✓');
@@ -1711,7 +1720,7 @@ function cloudPushAll(now){
   if(!sb||!cloudUser)return;clearTimeout(syncT);
   syncT=setTimeout(function(){
     var t=new Date().toISOString(),uid=cloudUser.id;
-    var rows=[{user_id:uid,key:'habits',value:habits,updated_at:t},{user_id:uid,key:'logs',value:logs,updated_at:t},{user_id:uid,key:'counter',value:counter,updated_at:t},{user_id:uid,key:'theme',value:document.body.classList.contains('light')?'light':'dark',updated_at:t}];
+    var rows=[{user_id:uid,key:'habits',value:habits,updated_at:t},{user_id:uid,key:'logs',value:logs,updated_at:t},{user_id:uid,key:'counter',value:counter,updated_at:t},{user_id:uid,key:'theme',value:curTheme(),updated_at:t}];
     _syncing=true;cloudSet('Salvando na nuvem…','');
     sb.from('foco_state').upsert(rows,{onConflict:'user_id,key'}).then(function(r){_syncing=false;if(!r.error){try{localStorage.removeItem(LS+'dirty');}catch(e){}markSync();}cloudSet(r.error?('Erro ao salvar: '+r.error.message):('Conectado: '+cloudUser.email+' · salvo'),r.error?'warn':'ok');});
   },now?100:1500);
