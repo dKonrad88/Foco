@@ -682,7 +682,7 @@ function inPeriod(dateStr,periodo){
   var d=new Date(dateStr+'T12:00:00'),now=new Date(curDate+'T12:00:00');
   if(periodo==='dia')return dateStr===curDate;
   if(periodo==='ano')return d.getFullYear()===now.getFullYear();
-  if(periodo==='semana'){var a=new Date(now);a.setDate(a.getDate()-((a.getDay()+6)%7));a.setHours(0,0,0,0);var b=new Date(a);b.setDate(a.getDate()+7);return d>=a&&d<b;}
+  if(periodo==='semana'){var a=new Date(now);a.setDate(a.getDate()-a.getDay());a.setHours(0,0,0,0);var b=new Date(a);b.setDate(a.getDate()+7);return d>=a&&d<b;}
   if(periodo==='trimestre')return d.getFullYear()===now.getFullYear()&&Math.floor(d.getMonth()/3)===Math.floor(now.getMonth()/3);
   if(periodo==='semestre')return d.getFullYear()===now.getFullYear()&&Math.floor(d.getMonth()/6)===Math.floor(now.getMonth()/6);
   return d.getFullYear()===now.getFullYear()&&d.getMonth()===now.getMonth(); /* mes */
@@ -894,7 +894,7 @@ function render(){
     +'<div class="daysel"><button class="dnav" onclick="shiftDate(-1)"><i class="ti ti-chevron-left"></i></button>'
       +'<div class="dlbl">'+dl.a+(dl.b?'<small>'+dl.b+'</small>':'')+'</div>'
       +'<button class="dnav" onclick="shiftDate(1)" '+(curDate>=today()?'disabled':'')+'><i class="ti ti-chevron-right"></i></button></div>'
-    +'<div class="cats">'+cats().map(function(c){return '<button class="cchip'+(c===catFilter?' on':'')+(c==='__hoje__'?' chip-hoje':'')+'" onclick="setCat(\''+esc(c)+'\')">'+(c==='__hoje__'?'⚡ Hoje':(c==='all'?'Todas':esc(c)))+'</button>';}).join('')+'</div>'
+    +'<div class="cats">'+cats().map(function(c){return '<button class="cchip'+(c===catFilter?' on':'')+(c==='__hoje__'?' chip-hoje':'')+'" onclick="setCat(\''+jsq(c)+'\')">'+(c==='__hoje__'?'⚡ Hoje':(c==='all'?'Todas':esc(c)))+'</button>';}).join('')+'</div>'
     +'<div class="prog"><div class="prog-top"><span><b>'+dn+'</b> de '+den+' feitos no dia</span><span>'+pct+'%</span></div><div class="bar"><i style="width:'+pct+'%"></i></div></div>';
 
   if(!habits.length){box.innerHTML='<div class="empty"><i class="ti ti-bolt"></i>Nenhum hábito ainda.<button class="madd" onclick="novoHabito()">Criar primeiro hábito</button></div>';return;}
@@ -924,7 +924,7 @@ function render(){
     }
     body+='<div class="chiplbl">'+esc(h.rotulo||'Selecione')+'</div><div class="chips">'+(items.length?items.map(function(it){
       var sel=l.items.indexOf(it.nome)>=0,a=agg[it.nome]||{qty:0,days:0},val=q?a.qty:a.days,bdg=it.meta>0?('<span class="chip-b">'+fmt(val)+'/'+fmt(it.meta)+'</span>'):(val>0?'<span class="chip-b">'+fmt(val)+'</span>':'');
-      return '<button class="chip'+(sel?' on':'')+'" onclick="toggleItem(\''+h.id+'\',\''+esc(it.nome)+'\')">'+esc(it.nome)+bdg+'</button>';
+      return '<button class="chip'+(sel?' on':'')+'" onclick="toggleItem(\''+h.id+'\',\''+jsq(it.nome)+'\')">'+esc(it.nome)+bdg+'</button>';
     }).join(''):'<span class="hint">Sem itens — edite o hábito na aba Hábitos.</span>')+'</div>';
     if(q){
       var sn=l.items[0];
@@ -1052,7 +1052,7 @@ function renderMes(){
       if(ev){
         if(relapseOn(h,ds)){sty='background:'+rgba('#e5544b',.85)+';border-color:'+rgba('#e5544b',.85);extra=' deslize';}
       }else if(doneOn(h,ds)){sty='background:'+h.cor+';border-color:'+h.cor;done=true;extra=' ✓';}
-      cells+='<div class="hm-cell'+(ds===tod?' today':'')+'" style="'+sty+'" title="'+esc(h.nome)+' · dia '+d+extra+'" onclick="mapTip(\''+esc(h.nome).replace(/'/g,'')+'\','+d+','+(done?'true':'false')+')"></div>';}
+      cells+='<div class="hm-cell'+(ds===tod?' today':'')+'" style="'+sty+'" title="'+esc(h.nome)+' · dia '+d+extra+'" onclick="mapTip(\''+jsq(h.nome)+'\','+d+','+(done?'true':'false')+')"></div>';}
     rows+='<div class="hm-row"><div class="hm-lbl"><span class="hm-ic">'+(h.icon||'•')+'</span><span class="hm-nm">'+esc(h.nome)+'</span></div><div class="hm-cells">'+cells+'</div></div>';
   });
   return '<div class="hb-intro">Toque uma caixinha pra ver o dia. Role na horizontal →</div>'+head+'<div class="hm-scroll"><div class="hm">'+colh+rows+'</div></div>';
@@ -1592,6 +1592,7 @@ function importJSON(input){
       if(!d||!Array.isArray(d.habits))throw new Error('formato inválido');
       habits=d.habits;logs=d.logs||{};counter=d.counter||(habits.length+1);
       if(d.theme)applyTheme(d.theme);
+      migrate();normalizeGrouped();recount();
       save();closeOv('ovMenu');curDate=today();
       if(tab==='foco')enter();else renderHabitos();
       toast('Dados importados ✓');
@@ -1615,6 +1616,7 @@ function resetTudo(){
 
 /* ===== utils / modais ===== */
 function esc(s){return String(s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function jsq(s){return esc(String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'"));}
 function rgba(hex,a){var h=String(hex||'#185FA5').replace('#','');var r=parseInt(h.substr(0,2),16),g=parseInt(h.substr(2,2),16),b=parseInt(h.substr(4,2),16);return 'rgba('+r+','+g+','+b+','+a+')';}
 /* ===== fechamento de mês (retrospectiva) ===== */
 function reviewData(y,mo){
