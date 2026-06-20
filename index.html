@@ -113,13 +113,17 @@ body.light .card{box-shadow:0 10px 30px rgba(20,40,80,.1)}
 .chip:active{transform:scale(.94)} .chip.on{background:var(--green);border-color:var(--green);color:#fff}
 .chip-b{margin-left:.4rem;font-size:.66rem;font-weight:800;padding:.06rem .36rem;border-radius:7px;background:rgba(127,143,166,.22)}
 .chip.on .chip-b{background:rgba(255,255,255,.28);color:#fff}
-.nav{display:flex;align-items:center;justify-content:space-between;gap:.6rem;margin-top:1.3rem;padding-top:1rem;border-top:1px solid var(--border)}
-.nav-r{display:flex;gap:.55rem;flex:1;justify-content:flex-end}
+.nav{display:grid;grid-template-columns:42px 1fr auto;align-items:center;gap:.55rem;margin-top:1.3rem;padding-top:1rem;border-top:1px solid var(--border)}
+.nav>.back,.nav>span:first-child{grid-column:1}
+.act{grid-column:2;display:flex;gap:.5rem;justify-content:flex-end;min-width:0}
+.act:empty{visibility:hidden}
+.nav-go{grid-column:3;justify-self:end;display:flex}
 .back{width:42px;height:42px;border-radius:13px;flex-shrink:0;background:var(--surface2);border:1px solid var(--border);color:var(--text);display:flex;align-items:center;justify-content:center;font-size:1.15rem;cursor:pointer;transition:.13s}
 .back:active{transform:scale(.9)}
 .skip,.next,.feito{padding:.72rem 1.05rem;border-radius:13px;font-size:.86rem;font-weight:700;cursor:pointer;font-family:inherit;border:1px solid var(--border);transition:.13s;display:flex;align-items:center;gap:.35rem}
 .skip{background:var(--surface2);color:var(--muted)} .skip:active{transform:scale(.94)}
-.next{background:linear-gradient(135deg,var(--blue2),var(--blue));color:#fff;border:none;flex:1;justify-content:center} .next:active{transform:scale(.96)}
+.next{background:linear-gradient(135deg,var(--blue2),var(--blue));color:#fff;border:none;justify-content:center} .next:active{transform:scale(.96)}
+.next,.feito,.relapse{min-width:7rem;justify-content:center}
 .feito{background:var(--green);color:#fff;border:none} .feito:active{transform:scale(.94)} .feito.is-done{background:var(--surface2);color:var(--green);border:1px solid var(--green)}
 .relapse{padding:.72rem 1.05rem;border-radius:13px;font-size:.86rem;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:.35rem;background:var(--surface2);color:var(--danger);border:1px solid var(--danger)}
 .relapse:active{transform:scale(.94)} .relapse.on{background:var(--danger);color:#fff;border-color:var(--danger)}
@@ -255,6 +259,12 @@ body.light .badge-warn{color:#8a5d00}
 .itemhint b{color:var(--blue)}
 .comeback{display:flex;align-items:center;gap:.5rem;margin-top:.85rem;padding:.6rem .75rem;border-radius:12px;background:rgba(240,165,0,.12);border:1px solid rgba(240,165,0,.35);font-size:.78rem;font-weight:600;color:var(--text);line-height:1.35}
 .comeback .ti{color:#f0a500;font-size:1.05rem;flex-shrink:0}
+.coach{display:flex;align-items:center;gap:.5rem;margin-top:.85rem;padding:.6rem .75rem;border-radius:12px;font-size:.78rem;font-weight:600;line-height:1.35;border:1px solid var(--border);color:var(--text)}
+.coach .ti{font-size:1.05rem;flex-shrink:0}
+.coach.ok{background:rgba(63,185,80,.10);border-color:rgba(63,185,80,.32)} .coach.ok .ti{color:var(--green)}
+.coach.warn{background:rgba(240,165,0,.12);border-color:rgba(240,165,0,.35)} .coach.warn .ti{color:#f0a500}
+.coach.bad{background:rgba(229,75,75,.10);border-color:rgba(229,75,75,.34)} .coach.bad .ti{color:var(--danger)}
+.coach.neu{background:var(--surface2);border-color:var(--border);color:var(--muted)} .coach.neu .ti{color:var(--muted)}
 .hora-tag{display:inline-flex;align-items:center;gap:.3rem;margin-top:.7rem;font-size:.72rem;font-weight:600;color:var(--muted)}
 .hora-tag .ti{font-size:.9rem}
 .coach-sec{margin-bottom:1rem}
@@ -785,6 +795,31 @@ var MSG={
 var _lastMsg={};
 function pick(k){var a=MSG[k]||[''];if(a.length<2)return a[0];var last=_lastMsg[k],c;do{c=a[Math.floor(Math.random()*a.length)];}while(c===last);_lastMsg[k]=c;return c;}
 function tomTexts(h){if(h.tom==='personalizado'&&h.tomCustom)return {s:(h.tomCustom.s||'Feito'),n:(h.tomCustom.n||'Pular')};return TONS[tomOf(h)];}
+function coachFeedback(h,l,done){
+  if(isEvitar(h)){var cs=cleanStreak(h);
+    if(l&&l.recaida)return {sev:'bad',icon:'ti-mood-sad',msg:'Escorregou hoje. Amanhã zera o contador.'};
+    if(lateBadge(h))return {sev:'bad',icon:'ti-alert-triangle',msg:'Teto do mês estourado. Segura o resto.'};
+    if(cs.cur>=3&&cs.cur===cs.best)return {sev:'ok',icon:'ti-trophy',msg:'Recorde: '+cs.cur+' dias sem.'};
+    if(cs.cur>=3)return {sev:'ok',icon:'ti-shield-check',msg:cs.cur+' dias sem. Segura essa.'};
+    if(cs.cur>0)return {sev:'neu',icon:'ti-shield',msg:'Primeiros dias sem. Vai firmando.'};
+    return null;
+  }
+  var ss=streakSoft(h);
+  if(isStale(h)){var ago=lastDoneAgo(h);return {sev:'warn',icon:'ti-flame',msg:ago+' dias parado. Recomeçar já conta.'};}
+  if(lateBadge(h)){var left=periodDaysLeft(h.periodo);
+    if(h.alvo>0&&left<=2)return {sev:'bad',icon:'ti-clock-hour-9',msg:'Faltam '+left+' dia'+(left===1?'':'s')+' e a meta tá longe.'};
+    return {sev:'warn',icon:'ti-activity-heartbeat',msg:'Atrás do ritmo do mês. Dá pra virar.'};
+  }
+  if(ss.forgiven)return {sev:'warn',icon:'ti-alert-triangle',msg:'Usou sua folga. Hoje não dá pra furar.'};
+  if(ss.cur>=3&&ss.cur===ss.best)return {sev:'ok',icon:'ti-trophy',msg:'Recorde: '+ss.cur+' dias seguidos.'};
+  if(ss.cur>=3)return {sev:'ok',icon:'ti-flame',msg:ss.cur+' dias seguidos. Não corta agora.'};
+  if(done){var g=returnGap(h);
+    if(g!==null&&g>=3)return {sev:'ok',icon:'ti-check',msg:'De volta depois de '+g+' dias. Bom te ver.'};
+    return {sev:'ok',icon:'ti-check',msg:'Feito. Um dia de cada vez.'};
+  }
+  if(isDue(h))return {sev:'neu',icon:'ti-circle-dot',msg:'Pendente hoje. Registra o que fez.'};
+  return null;
+}
 function tomOf(h){return (h.tipo==='bool'&&h.tom&&TONS[h.tom])?h.tom:'padrao';}
 function isEvitar(h){return h.tipo==='bool'&&h.tom==='evitar';}
 function relapseOn(h,ds){var l=logs[ds]&&logs[ds][h.id];return !!(l&&l.recaida);}
@@ -943,23 +978,27 @@ function render(){
       body+='<div class="evt-teto"><span>teto do mês: '+teto+' deslize'+(teto===1?'':'s')+' · '+rel+' usado'+(rel===1?'':'s')+'</span><span class="evt-pips">'+pips+'</span></div>';}
   }
   var backBtn=idx>0?'<button class="back" onclick="back()"><i class="ti ti-arrow-left"></i></button>':'<span style="width:42px"></span>';
-  if(isStale(h)){var sa=lastDoneAgo(h);body+='<div class="comeback"><i class="ti ti-flame"></i><span>Faz <b>'+sa+' dias</b> sem '+esc(h.nome).toLowerCase()+'. Recomeçar já vale — sem culpa.</span></div>';}
   if(done&&l.hora!=null)body+='<div class="hora-tag"><i class="ti ti-clock-hour-9"></i> registrado às '+horaStr(l.hora)+'</div>';
   var hasVal=h.tipo==='numero'?(l.valor>0):(isQty(h)?(l.valor>0||l.items.length>0):(l.items.length>0));
   var clr='<button class="skip" onclick="desfazer(\''+h.id+'\')"><i class="ti ti-rotate-2"></i> Zerar</button>';
-  var right;
+  var act='',go='';
   if(h.tipo==='bool'){
     if(isEvitar(h)){
-      right='<button class="skip" onclick="limpoHoje(\''+h.id+'\')"><i class="ti ti-shield-check"></i> Tudo certo</button><button class="relapse'+(l.recaida?' on':'')+'" onclick="escorregar(\''+h.id+'\')"><i class="ti ti-mood-sad"></i> Escorreguei</button>';
+      act='<button class="skip" onclick="limpoHoje(\''+h.id+'\')"><i class="ti ti-shield-check"></i> Tudo certo</button>';
+      go='<button class="relapse'+(l.recaida?' on':'')+'" onclick="escorregar(\''+h.id+'\')"><i class="ti ti-mood-sad"></i> Escorreguei</button>';
     }else{
       var T=tomTexts(h);
-      right='<button class="skip" onclick="pular(\''+h.id+'\')">'+esc(T.n)+'</button>'+(done?'<button class="feito is-done" onclick="desfazer(\''+h.id+'\')"><i class="ti ti-rotate-2"></i> Desfazer</button>':'<button class="feito" onclick="markDone(\''+h.id+'\')"><i class="ti ti-check"></i> '+esc(T.s)+'</button>');
+      act='<button class="skip" onclick="pular(\''+h.id+'\')">'+esc(T.n)+'</button>';
+      go=done?'<button class="feito is-done" onclick="desfazer(\''+h.id+'\')"><i class="ti ti-rotate-2"></i> Desfazer</button>':'<button class="feito" onclick="markDone(\''+h.id+'\')"><i class="ti ti-check"></i> '+esc(T.s)+'</button>';
     }
   }else{
-    right=(hasVal?clr:'')+'<button class="next" onclick="next()">Próximo <i class="ti ti-arrow-right"></i></button>';
+    act=(hasVal?clr:'');
+    go='<button class="next" onclick="next()">Próximo <i class="ti ti-arrow-right"></i></button>';
   }
+  var cf=coachFeedback(h,l,done);
+  var coach=cf?'<div class="coach '+cf.sev+'"><i class="ti '+cf.icon+'"></i><span>'+esc(cf.msg)+'</span></div>':'';
   var cls='card'+(done?' done':'')+(lastDir==='b'?' back-anim':'');
-  box.innerHTML=head+'<div class="'+cls+'"><div class="step">'+(idx+1)+' / '+queue.length+'</div><div class="cardic" style="background:'+rgba(h.cor,.16)+'">'+(h.icon||'•')+'</div><div class="cname">'+esc(h.nome)+(done?'<span class="doneflag"><i class="ti ti-circle-check-filled"></i></span>':'')+'</div>'+(h.cat?'<div class="ccat">'+esc(h.cat)+'</div>':'')+(ml?'<div class="cmeta">'+ml+'</div>':'')+body+'<div class="nav">'+backBtn+'<div class="nav-r">'+right+'</div></div></div><div class="hint">deslize ← → para navegar</div>';
+  box.innerHTML=head+'<div class="'+cls+'"><div class="step">'+(idx+1)+' / '+queue.length+'</div><div class="cardic" style="background:'+rgba(h.cor,.16)+'">'+(h.icon||'•')+'</div><div class="cname">'+esc(h.nome)+(done?'<span class="doneflag"><i class="ti ti-circle-check-filled"></i></span>':'')+'</div>'+(h.cat?'<div class="ccat">'+esc(h.cat)+'</div>':'')+(ml?'<div class="cmeta">'+ml+'</div>':'')+body+coach+'<div class="nav">'+backBtn+'<div class="act">'+act+'</div><div class="nav-go">'+go+'</div></div></div><div class="hint">deslize ← → para navegar</div>';
   var card=box.querySelector('.card');var x0=null,y0=null;
   card.addEventListener('touchstart',function(e){x0=e.touches[0].clientX;y0=e.touches[0].clientY;},{passive:true});
   card.addEventListener('touchend',function(e){if(x0===null)return;var dx=e.changedTouches[0].clientX-x0,dy=e.changedTouches[0].clientY-y0;if(Math.abs(dx)>55&&Math.abs(dx)>Math.abs(dy)*1.3){if(dx<0)next();else back();}x0=null;},{passive:true});
