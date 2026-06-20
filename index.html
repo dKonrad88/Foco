@@ -406,9 +406,6 @@ body.light .badge-warn{color:#8a5d00}
           <label>Estilo de resposta</label>
           <select id="habTom" onchange="tomChange()">
             <option value="padrao">Padrão · Marcar feito / Pular</option>
-            <option value="bemestar">Bem-estar · Fiz / Pulei, tá tudo bem</option>
-            <option value="casal">Casal · Rolou / Fica pra próxima</option>
-            <option value="treino">Treino · Treinei / Descanso hoje</option>
             <option value="evitar">Evitar · vício ou hábito ruim</option>
             <option value="personalizado">Personalizado · eu escolho os textos</option>
           </select>
@@ -776,9 +773,6 @@ function toggleItem(id,name){var h=H(id),bm=metaProgress(h),bs=streakSoft(h).cur
 /* ===== tons de resposta + tipo "evitar" ===== */
 var TONS={
   padrao:{s:'Marcar feito',n:'Pular',label:'Padrão (Marcar feito / Pular)'},
-  bemestar:{s:'Fiz',n:'Pulei, tá tudo bem',label:'Bem-estar (Fiz / Pulei, tá tudo bem)'},
-  casal:{s:'Rolou',n:'Fica pra próxima',label:'Casal (Rolou / Fica pra próxima)'},
-  treino:{s:'Treinei',n:'Descanso hoje',label:'Treino (Treinei / Descanso hoje)'},
   evitar:{s:'Tudo certo',n:'Escorreguei',label:'Evitar — vício/hábito ruim (limpo por padrão)'}
 };
 var MSG={
