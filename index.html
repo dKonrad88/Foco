@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Foco · Hábitos</title>
 <!-- PWA / iOS -->
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -75,6 +75,7 @@ body.light .phone{box-shadow:0 0 0 8px #2a3344,0 30px 70px rgba(0,0,0,.35)}
 .dnav:active{transform:scale(.9)} .dnav:hover{border-color:var(--blue);color:var(--blue)} .dnav:disabled{opacity:.3;pointer-events:none}
 .dlbl{font-weight:700;font-size:.9rem;min-width:120px;text-align:center;display:flex;flex-direction:column;line-height:1.1}
 .dlbl small{font-size:.62rem;color:var(--muted);font-weight:500;text-transform:uppercase;letter-spacing:.06em}
+.dlbl-back{cursor:pointer;color:var(--blue)}
 .cats{display:flex;gap:.4rem;overflow-x:auto;scrollbar-width:none;padding-bottom:.3rem;margin-bottom:.7rem}
 .cats::-webkit-scrollbar{display:none}
 .cchip{padding:.32rem .7rem;border-radius:999px;font-size:.72rem;font-weight:600;white-space:nowrap;background:var(--surface2);border:1px solid var(--border);color:var(--muted);cursor:pointer;transition:.15s;flex-shrink:0}
@@ -172,11 +173,6 @@ body.light .card{box-shadow:0 10px 30px rgba(20,40,80,.1)}
 .empty .madd{margin-top:1rem}
 
 /* ===== HÁBITOS (cadastro) ===== */
-.hcard{display:flex;align-items:center;gap:.7rem;padding:.8rem .85rem;border:1px solid var(--border);border-radius:16px;background:var(--surface);margin-bottom:.6rem;cursor:pointer;transition:.13s}
-.hcard:active{transform:scale(.985)} .hcard:hover{border-color:var(--blue)}
-.hcard-ic{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0}
-.hcard-mid{flex:1;min-width:0} .hcard-mid b{font-size:.92rem;font-weight:700;display:block} .hcard-mid span{font-size:.7rem;color:var(--muted)}
-.hcard-tag{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);background:var(--surface2);padding:.2rem .45rem;border-radius:7px;border:1px solid var(--border)}
 .addbig{width:100%;padding:.85rem;border-radius:14px;border:1px dashed var(--border);background:transparent;color:var(--blue);font-family:inherit;font-weight:700;font-size:.9rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.4rem;margin-top:.3rem;transition:.13s}
 .addbig:active{transform:scale(.98)} .addbig:hover{border-color:var(--blue);background:rgba(24,95,165,.06)}
 
@@ -245,9 +241,6 @@ body.light .badge-warn{color:#8a5d00}
 .colors{display:flex;gap:.5rem;flex-wrap:wrap}
 .sw{width:30px;height:30px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:.12s}
 .sw.on{border-color:var(--text);transform:scale(1.12)}
-.itemchips{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.5rem}
-.ichip{background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:.35rem .6rem;font-size:.8rem;display:flex;align-items:center;gap:.4rem}
-.ichip i{cursor:pointer;color:var(--danger);font-size:.95rem}
 .itemrows{display:flex;flex-direction:column;gap:.4rem;margin-bottom:.5rem}
 .itemrow{display:grid;grid-template-columns:1fr 62px auto 20px;gap:.4rem;align-items:center}
 .itemrow.qty{grid-template-columns:1fr 52px 52px auto 18px}
@@ -257,8 +250,6 @@ body.light .badge-warn{color:#8a5d00}
 .itemrow .item-nome:focus,.itemrow .item-meta:focus,.itemrow .item-base:focus{outline:none;border-color:var(--blue)}
 .itemhint{font-size:.68rem;color:var(--muted);font-weight:600;margin-bottom:.15rem}
 .itemhint b{color:var(--blue)}
-.comeback{display:flex;align-items:center;gap:.5rem;margin-top:.85rem;padding:.6rem .75rem;border-radius:12px;background:rgba(240,165,0,.12);border:1px solid rgba(240,165,0,.35);font-size:.78rem;font-weight:600;color:var(--text);line-height:1.35}
-.comeback .ti{color:#f0a500;font-size:1.05rem;flex-shrink:0}
 .coach{display:flex;align-items:center;gap:.5rem;margin-top:.85rem;padding:.6rem .75rem;border-radius:12px;font-size:.78rem;font-weight:600;line-height:1.35;border:1px solid var(--border);color:var(--text)}
 .coach .ti{font-size:1.05rem;flex-shrink:0}
 .coach.ok{background:rgba(63,185,80,.10);border-color:rgba(63,185,80,.32)} .coach.ok .ti{color:var(--green)}
@@ -927,7 +918,7 @@ function render(){
   var sc=scope(),scA=sc.filter(function(h){return !isEvitar(h);}),dn=scA.filter(isDone).length,den=scA.length,pct=den?Math.round(dn/den*100):0,dl=dateLabel();
   var head=''
     +'<div class="daysel"><button class="dnav" onclick="shiftDate(-1)"><i class="ti ti-chevron-left"></i></button>'
-      +'<div class="dlbl">'+dl.a+(dl.b?'<small>'+dl.b+'</small>':'')+'</div>'
+      +'<div class="dlbl'+(curDate===today()?'':' dlbl-back')+'" '+(curDate===today()?'':'onclick="setToday()" title="Voltar para hoje"')+'>'+dl.a+(dl.b?'<small>'+dl.b+'</small>':'')+'</div>'
       +'<button class="dnav" onclick="shiftDate(1)" '+(curDate>=today()?'disabled':'')+'><i class="ti ti-chevron-right"></i></button></div>'
     +'<div class="cats">'+cats().map(function(c){return '<button class="cchip'+(c===catFilter?' on':'')+(c==='__hoje__'?' chip-hoje':'')+'" onclick="setCat(\''+jsq(c)+'\')">'+(c==='__hoje__'?'⚡ Hoje':(c==='all'?'Todas':esc(c)))+'</button>';}).join('')+'</div>'
     +'<div class="prog"><div class="prog-top"><span><b>'+dn+'</b> de '+den+' feitos no dia</span><span>'+pct+'%</span></div><div class="bar"><i style="width:'+pct+'%"></i></div></div>';
