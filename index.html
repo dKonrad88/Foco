@@ -93,7 +93,7 @@ body.light .card{box-shadow:0 10px 30px rgba(20,40,80,.1)}
 @keyframes cardin{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
 .card.back-anim{animation:cardinL .32s cubic-bezier(.2,.75,.3,1)}
 @keyframes cardinL{from{opacity:0;transform:translateX(-26px)}to{opacity:1;transform:none}}
-.step{position:absolute;top:14px;right:16px;font-size:.68rem;font-weight:700;color:var(--muted);letter-spacing:.04em}
+.step{font-size:.68rem;font-weight:700;color:var(--muted);letter-spacing:.04em;margin-top:.7rem}
 .cardic{width:74px;height:74px;border-radius:20px;margin:.2rem auto .75rem;display:flex;align-items:center;justify-content:center;font-size:2.2rem}
 .cname{font-size:1.32rem;font-weight:800;line-height:1.15;display:flex;align-items:center;justify-content:center;gap:.4rem;flex-wrap:wrap}
 .doneflag{color:var(--green);font-size:1.1rem;display:inline-flex}
@@ -114,7 +114,7 @@ body.light .card{box-shadow:0 10px 30px rgba(20,40,80,.1)}
 .chip:active{transform:scale(.94)} .chip.on{background:var(--green);border-color:var(--green);color:#fff}
 .chip-b{margin-left:.4rem;font-size:.66rem;font-weight:800;padding:.06rem .36rem;border-radius:7px;background:rgba(127,143,166,.22)}
 .chip.on .chip-b{background:rgba(255,255,255,.28);color:#fff}
-.nav{display:grid;grid-template-columns:42px 1fr auto;align-items:center;gap:.55rem;margin-top:1.3rem;padding-top:1rem;border-top:1px solid var(--border)}
+.nav{display:grid;grid-template-columns:42px 1fr auto;align-items:center;gap:.55rem;margin-bottom:.9rem;padding-bottom:.9rem;border-bottom:1px solid var(--border)}
 .nav>.back,.nav>span:first-child{grid-column:1}
 .act{grid-column:2;display:flex;gap:.5rem;justify-content:flex-end;min-width:0}
 .act:empty{visibility:hidden}
@@ -137,6 +137,35 @@ body.light .card{box-shadow:0 10px 30px rgba(20,40,80,.1)}
 .evt-pips{display:flex;gap:5px;flex-shrink:0}
 .evt-pip{width:11px;height:11px;border-radius:50%;border:1px solid var(--border);flex-shrink:0}
 .evt-pip.used{background:var(--danger);border-color:var(--danger)}
+/* ===== Foco · vista Lista ===== */
+.fseg{display:flex;gap:.3rem;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:.25rem;margin:0 auto .75rem;max-width:240px}
+.fsg{flex:1;border:none;background:transparent;color:var(--muted);font-weight:700;font-size:.78rem;padding:.42rem .2rem;border-radius:9px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.3rem;font-family:inherit;transition:.13s}
+.fsg.on{background:var(--surface);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.12)}
+.fsg .ti{font-size:.95rem}
+.lista{display:flex;flex-direction:column;gap:.5rem}
+.lcat{display:flex;align-items:center;gap:.45rem;font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);padding:.5rem .3rem .1rem}
+.lcat-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.lrow{border:1px solid var(--border);border-radius:15px;background:var(--surface);overflow:hidden;transition:border-color .15s}
+.lrow.done{border-color:rgba(90,164,105,.4)}
+.lrow-head{position:relative;overflow:hidden}
+.lrow-bg{position:absolute;top:0;right:0;bottom:0;display:flex;align-items:stretch}
+.lrow-act{width:65px;border:none;display:flex;align-items:center;justify-content:center;font-size:1.25rem;color:#fff;cursor:pointer}
+.lrow-act.edit{background:var(--blue)} .lrow-act.zero{background:var(--danger)}
+.lrow-fg{position:relative;display:flex;align-items:center;gap:.3rem;background:var(--surface);padding:.35rem .6rem .35rem .35rem;touch-action:pan-y;will-change:transform}
+.lrow.done .lrow-fg{background:linear-gradient(180deg,rgba(90,164,105,.08),var(--surface))}
+.lrow-main{flex:1;display:flex;align-items:center;gap:.7rem;padding:.45rem .3rem;min-width:0;cursor:pointer}
+.lrow-ic{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0}
+.lrow-tx{min-width:0}
+.lrow-nm{font-size:.95rem;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lrow-sub{font-size:.72rem;color:var(--muted);font-weight:500;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ladd{width:42px;height:42px;flex-shrink:0;border-radius:12px;background:var(--surface2);border:1px solid var(--border);color:var(--blue);font-size:1.35rem;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.13s}
+.ladd:active{transform:scale(.88)}
+.ladd.done{background:var(--green);border-color:var(--green);color:#fff}
+.ladd.open{background:rgba(24,95,165,.16);border-color:var(--blue)}
+.ladd.slip{background:var(--danger);border-color:var(--danger);color:#fff}
+.lpanel{padding:.2rem .9rem 1rem;border-top:1px solid var(--border);animation:lpan .22s ease}
+.lpanel .atalhos{margin-top:.8rem}
+@keyframes lpan{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
 .cele{position:fixed;inset:0;z-index:80;display:flex;align-items:flex-end;justify-content:center;padding:0 16px 86px;pointer-events:none}
 .cele-card{transform:translateY(22px);opacity:0;transition:transform .3s cubic-bezier(.2,1.3,.4,1),opacity .22s;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:.85rem 1.15rem;text-align:center;box-shadow:0 14px 40px rgba(0,0,0,.4);max-width:92%;pointer-events:auto}
 .cele.on .cele-card{transform:translateY(0);opacity:1}
@@ -742,7 +771,9 @@ function fmt(n){n=Math.round(n*100)/100;return Number.isInteger(n)?n:(''+n).repl
 function setTab(t){tab=t;['foco','habitos','insights'].forEach(function(x){var el=document.getElementById('tab-'+x);if(el)el.classList.toggle('active',t===x);});if(t==='foco'){curDate=today();resumeFoco();}else if(t==='habitos')renderHabitos();else{insTab='resumo';renderInsights();}}
 
 /* ===== FOCO ===== */
-var catFilter='all',queue=[],idx=0,lastDir='f';
+var catFilter='all',queue=[],idx=0,lastDir='f',focoView='foco',_listOpen=null;
+function setFocoView(v){focoView=v;_listOpen=null;if(v==='foco')enter();else render();}
+function toggleListOpen(id){_listOpen=(_listOpen===id)?null:id;render();}
 function cats(){var s=['__hoje__','all'];habits.forEach(function(h){var c=h.cat||'Sem categoria';if(s.indexOf(c)<0)s.push(c);});return s;}
 function scope(){if(catFilter==='__hoje__')return habits.filter(expectedToday);return habits.filter(function(h){return catFilter==='all'||(h.cat||'Sem categoria')===catFilter;});}
 function setCat(c){catFilter=c;enter();}
@@ -912,28 +943,8 @@ function celeEvitarBoot(){
 function escorregar(id){var l=L(id);l.recaida=true;l.feito=false;l.valor=0;l.items=[];save();toast(pick('slip'));sfx('slip');render();}
 function limpoHoje(id){var h=H(id),bs=cleanStreak(h).cur,l=getLog(id,curDate);if(l&&l.recaida){L(id).recaida=false;save();toast(pick('desfeito'));render();}else{save();if(!celeCheck(h,0,bs)){toast(pick('limpo'));sfx('feito');}next();}}
 
-function render(){
-  if(tab!=='foco')return;
-  var box=document.getElementById('screen');
-  var sc=scope(),scA=sc.filter(function(h){return !isEvitar(h);}),dn=scA.filter(isDone).length,den=scA.length,pct=den?Math.round(dn/den*100):0,dl=dateLabel();
-  var head=''
-    +'<div class="daysel"><button class="dnav" onclick="shiftDate(-1)"><i class="ti ti-chevron-left"></i></button>'
-      +'<div class="dlbl'+(curDate===today()?'':' dlbl-back')+'" '+(curDate===today()?'':'onclick="setToday()" title="Voltar para hoje"')+'>'+dl.a+(dl.b?'<small>'+dl.b+'</small>':'')+'</div>'
-      +'<button class="dnav" onclick="shiftDate(1)" '+(curDate>=today()?'disabled':'')+'><i class="ti ti-chevron-right"></i></button></div>'
-    +'<div class="cats">'+cats().map(function(c){return '<button class="cchip'+(c===catFilter?' on':'')+(c==='__hoje__'?' chip-hoje':'')+'" onclick="setCat(\''+jsq(c)+'\')">'+(c==='__hoje__'?'⚡ Hoje':(c==='all'?'Todas':esc(c)))+'</button>';}).join('')+'</div>'
-    +'<div class="prog"><div class="prog-top"><span><b>'+dn+'</b> de '+den+' feitos no dia</span><span>'+pct+'%</span></div><div class="bar"><i style="width:'+pct+'%"></i></div></div>';
-
-  if(!habits.length){box.innerHTML='<div class="empty"><i class="ti ti-bolt"></i>Nenhum hábito ainda.<button class="madd" onclick="novoHabito()">Criar primeiro hábito</button></div>';return;}
-  if(!sc.length){box.innerHTML=head+'<div class="empty"><i class="ti ti-'+(catFilter==='__hoje__'?'circle-check':'filter')+'"></i>'+(catFilter==='__hoje__'?'Nada esperado pra hoje. Dia leve 🎉':'Nenhum hábito nesta categoria.')+'</div>';return;}
-
-  if(idx>=queue.length){
-    var all=den>0&&dn>=den;
-    box.innerHTML=head+'<div class="card finish"><div class="finish-emoji">'+(all?'🎉':'✅')+'</div><div class="finish-tt">'+(all?'Dia fechado!':'Tudo revisado')+'</div><div class="finish-sub">'+dn+' de '+den+' feitos no dia'+(all?'. Mandou bem.':'. Os pulados seguem te esperando.')+'</div><div class="finish-btns"><button class="skip" onclick="restart('+(all?'true':'false')+')">'+(all?'Revisar todos':'Rever pendentes')+'</button></div></div>';
-    return;
-  }
-  var h=habits.find(function(x){return x.id===queue[idx];});
-  if(!h){idx++;return render();}
-  var l=L(h.id),done=isDone(h),ml=metaLine(h),body='';
+function cardBody(h,l){
+  var body='';
   if(h.tipo==='numero'){
     var ats=h.atalhos||[];
     if(ats.length)body+='<div class="atalhos">'+ats.map(function(a){return '<button class="at" onclick="quick(\''+h.id+'\','+a+')">+'+fmt(a)+'</button>';}).join('')+'</div>';
@@ -968,6 +979,107 @@ function render(){
     if(teto>0){var pips='';for(var pi=0;pi<Math.min(teto,10);pi++)pips+='<i class="evt-pip'+(pi<rel?' used':'')+'"></i>';
       body+='<div class="evt-teto"><span>teto do mês: '+teto+' deslize'+(teto===1?'':'s')+' · '+rel+' usado'+(rel===1?'':'s')+'</span><span class="evt-pips">'+pips+'</span></div>';}
   }
+  return body;
+}
+
+function focoHead(){
+  var sc=scope(),scA=sc.filter(function(h){return !isEvitar(h);}),dn=scA.filter(isDone).length,den=scA.length,pct=den?Math.round(dn/den*100):0,dl=dateLabel();
+  return ''
+    +'<div class="daysel"><button class="dnav" onclick="shiftDate(-1)"><i class="ti ti-chevron-left"></i></button>'
+      +'<div class="dlbl'+(curDate===today()?'':' dlbl-back')+'" '+(curDate===today()?'':'onclick="setToday()" title="Voltar para hoje"')+'>'+dl.a+(dl.b?'<small>'+dl.b+'</small>':'')+'</div>'
+      +'<button class="dnav" onclick="shiftDate(1)" '+(curDate>=today()?'disabled':'')+'><i class="ti ti-chevron-right"></i></button></div>'
+    +'<div class="fseg"><button class="fsg'+(focoView==='foco'?' on':'')+'" onclick="setFocoView(\'foco\')"><i class="ti ti-stack-2"></i> Foco</button><button class="fsg'+(focoView==='lista'?' on':'')+'" onclick="setFocoView(\'lista\')"><i class="ti ti-list-check"></i> Lista</button></div>'
+    +'<div class="cats">'+cats().map(function(c){return '<button class="cchip'+(c===catFilter?' on':'')+(c==='__hoje__'?' chip-hoje':'')+'" onclick="setCat(\''+jsq(c)+'\')">'+(c==='__hoje__'?'⚡ Hoje':(c==='all'?'Todas':esc(c)))+'</button>';}).join('')+'</div>'
+    +'<div class="prog"><div class="prog-top"><span><b>'+dn+'</b> de '+den+' feitos no dia</span><span>'+pct+'%</span></div><div class="bar"><i style="width:'+pct+'%"></i></div></div>';
+}
+function listSub(h,l,ev){
+  if(ev){var cs=cleanStreak(h);return cs.cur+' dia'+(cs.cur===1?'':'s')+' sem'+(cs.best>cs.cur?' · recorde '+cs.best:'');}
+  var parts=[];
+  if(h.tipo==='numero'){if(l.valor>0)parts.push('Hoje '+fmt(l.valor)+(h.unidade?' '+esc(h.unidade):''));}
+  else if(h.tipo==='item'){if(isQty(h)){if(l.valor>0)parts.push('Hoje '+fmt(l.valor)+' '+esc(h.unidade));}else if(l.items.length)parts.push(l.items.map(esc).join(', '));}
+  var ml=metaLine(h);if(ml)parts.push(ml);
+  if(!parts.length){var ss=streakSoft(h);if(ss.cur>0)parts.push(ss.cur+' dia'+(ss.cur===1?'':'s')+' seguidos');}
+  return parts.join(' · ');
+}
+function listRow(h){
+  var l=L(h.id),done=isDone(h),ev=isEvitar(h),open=(_listOpen===h.id),expandable=(!ev&&h.tipo!=='bool');
+  var sub=listSub(h,l,ev),addBtn;
+  if(ev)addBtn='<button class="ladd'+(l.recaida?' slip':'')+'" onclick="event.stopPropagation();listAdd(\''+h.id+'\')" title="'+(l.recaida?'Desfazer deslize':'Registrar deslize')+'"><i class="ti '+(l.recaida?'ti-mood-sad':'ti-shield-check')+'"></i></button>';
+  else if(h.tipo==='bool')addBtn='<button class="ladd'+(done?' done':'')+'" onclick="event.stopPropagation();listAdd(\''+h.id+'\')"><i class="ti '+(done?'ti-check':'ti-plus')+'"></i></button>';
+  else addBtn='<button class="ladd'+(done?' done':'')+(open?' open':'')+'" onclick="event.stopPropagation();toggleListOpen(\''+h.id+'\')"><i class="ti '+(open?'ti-x':(done?'ti-check':'ti-plus'))+'"></i></button>';
+  var panel=(open&&expandable)?'<div class="lpanel">'+cardBody(h,l)+'</div>':'';
+  return '<div class="lrow'+(done?' done':'')+'" data-id="'+esc(h.id)+'">'
+    +'<div class="lrow-head">'
+      +'<div class="lrow-bg"><button class="lrow-act edit" onclick="editarHabito(\''+esc(h.id)+'\')"><i class="ti ti-pencil"></i></button>'
+        +'<button class="lrow-act zero" onclick="listZerar(\''+h.id+'\')"><i class="ti ti-rotate-2"></i></button></div>'
+      +'<div class="lrow-fg">'
+        +'<div class="lrow-main"'+(expandable?' onclick="toggleListOpen(\''+h.id+'\')"':'')+'><div class="lrow-ic" style="background:'+rgba(h.cor,.16)+'">'+(h.icon||'•')+'</div>'
+          +'<div class="lrow-tx"><div class="lrow-nm">'+esc(h.nome)+'</div>'+(sub?'<div class="lrow-sub">'+sub+'</div>':'')+'</div></div>'
+        +addBtn
+      +'</div>'
+    +'</div>'+panel
+  +'</div>';
+}
+function renderLista(){
+  var box=document.getElementById('screen'),head=focoHead();
+  if(!habits.length){box.innerHTML='<div class="empty"><i class="ti ti-bolt"></i>Nenhum hábito ainda.<button class="madd" onclick="novoHabito()">Criar primeiro hábito</button></div>';return;}
+  var sc=scope();
+  if(!sc.length){box.innerHTML=head+'<div class="empty"><i class="ti ti-'+(catFilter==='__hoje__'?'circle-check':'filter')+'"></i>'+(catFilter==='__hoje__'?'Nada esperado pra hoje. Dia leve 🎉':'Nenhum hábito nesta categoria.')+'</div>';return;}
+  var byCat={};sc.forEach(function(h){var c=catKey(h);(byCat[c]=byCat[c]||[]).push(h);});
+  var html='<div class="lista">';
+  catOrder().forEach(function(c){var m=byCat[c];if(!m||!m.length)return;
+    html+='<div class="lcat"><span class="lcat-dot" style="background:'+catColor(c)+'"></span>'+esc(c||'Sem categoria')+'</div>';
+    m.forEach(function(h){html+=listRow(h);});
+  });
+  html+='</div>';
+  box.innerHTML=head+html;
+  attachListSwipe();
+}
+function listAdd(id){
+  var h=H(id);if(!h)return;
+  if(isEvitar(h)){var l=getLog(id,curDate);if(l&&l.recaida){L(id).recaida=false;save();toast(pick('desfeito'));render();}else escorregar(id);return;}
+  if(h.tipo==='bool'){
+    if(isDone(h)){desfazer(id);return;}
+    var bm=metaProgress(h),bs=streakSoft(h).cur;L(id).feito=true;stampHora(id);save();
+    if(!celeCheck(h,bm,bs)){toast(pick('feito'));sfx('feito');}render();return;
+  }
+}
+function listZerar(id){var h=H(id);if(h&&isEvitar(h)){var l=L(id);if(l.recaida){l.recaida=false;save();toast(pick('desfeito'));}render();return;}desfazer(id);}
+function attachListSwipe(){
+  var rows=document.querySelectorAll('.lista .lrow'),openRow=null;
+  function close(r){if(!r)return;var fg=r.querySelector('.lrow-fg');if(fg){fg.style.transition='';fg.style.transform='';}r.classList.remove('swiped');}
+  Array.prototype.forEach.call(rows,function(row){
+    var fg=row.querySelector('.lrow-fg'),bg=row.querySelector('.lrow-bg');if(!fg||!bg)return;
+    var x0=null,y0=null,dx=0,drag=false,max=130;
+    fg.addEventListener('touchstart',function(e){x0=e.touches[0].clientX;y0=e.touches[0].clientY;dx=0;drag=false;max=bg.offsetWidth||130;fg.style.transition='none';},{passive:true});
+    fg.addEventListener('touchmove',function(e){if(x0===null)return;var ddx=e.touches[0].clientX-x0,ddy=e.touches[0].clientY-y0;
+      if(!drag){if(Math.abs(ddx)>8&&Math.abs(ddx)>Math.abs(ddy)*1.2){drag=true;if(openRow&&openRow!==row)close(openRow);}else if(Math.abs(ddy)>10){x0=null;return;}}
+      if(drag){var base=row.classList.contains('swiped')?-max:0;dx=Math.max(-max-22,Math.min(0,base+ddx));fg.style.transform='translateX('+dx+'px)';}
+    },{passive:true});
+    fg.addEventListener('touchend',function(){if(x0===null)return;fg.style.transition='';
+      if(drag){if(dx<-max/2){fg.style.transform='translateX(-'+max+'px)';row.classList.add('swiped');openRow=row;}else{close(row);if(openRow===row)openRow=null;}}
+      x0=null;},{passive:true});
+    fg.addEventListener('click',function(e){if(row.classList.contains('swiped')){e.preventDefault();e.stopPropagation();close(row);if(openRow===row)openRow=null;}},true);
+  });
+}
+
+function render(){
+  if(tab!=='foco')return;
+  if(focoView==='lista')return renderLista();
+  var box=document.getElementById('screen');
+  var sc=scope(),scA=sc.filter(function(h){return !isEvitar(h);}),dn=scA.filter(isDone).length,den=scA.length,head=focoHead();
+
+  if(!habits.length){box.innerHTML='<div class="empty"><i class="ti ti-bolt"></i>Nenhum hábito ainda.<button class="madd" onclick="novoHabito()">Criar primeiro hábito</button></div>';return;}
+  if(!sc.length){box.innerHTML=head+'<div class="empty"><i class="ti ti-'+(catFilter==='__hoje__'?'circle-check':'filter')+'"></i>'+(catFilter==='__hoje__'?'Nada esperado pra hoje. Dia leve 🎉':'Nenhum hábito nesta categoria.')+'</div>';return;}
+
+  if(idx>=queue.length){
+    var all=den>0&&dn>=den;
+    box.innerHTML=head+'<div class="card finish"><div class="finish-emoji">'+(all?'🎉':'✅')+'</div><div class="finish-tt">'+(all?'Dia fechado!':'Tudo revisado')+'</div><div class="finish-sub">'+dn+' de '+den+' feitos no dia'+(all?'. Mandou bem.':'. Os pulados seguem te esperando.')+'</div><div class="finish-btns"><button class="skip" onclick="restart('+(all?'true':'false')+')">'+(all?'Revisar todos':'Rever pendentes')+'</button></div></div>';
+    return;
+  }
+  var h=habits.find(function(x){return x.id===queue[idx];});
+  if(!h){idx++;return render();}
+  var l=L(h.id),done=isDone(h),ml=metaLine(h),body=cardBody(h,l);
   var backBtn=idx>0?'<button class="back" onclick="back()"><i class="ti ti-arrow-left"></i></button>':'<span style="width:42px"></span>';
   if(done&&l.hora!=null)body+='<div class="hora-tag"><i class="ti ti-clock-hour-9"></i> registrado às '+horaStr(l.hora)+'</div>';
   var hasVal=h.tipo==='numero'?(l.valor>0):(isQty(h)?(l.valor>0||l.items.length>0):(l.items.length>0));
@@ -989,7 +1101,7 @@ function render(){
   var cf=coachFeedback(h,l,done);
   var coach=cf?'<div class="coach '+cf.sev+'"><i class="ti '+cf.icon+'"></i><span>'+esc(cf.msg)+'</span></div>':'';
   var cls='card'+(done?' done':'')+(lastDir==='b'?' back-anim':'');
-  box.innerHTML=head+'<div class="'+cls+'"><div class="step">'+(idx+1)+' / '+queue.length+'</div><div class="cardic" style="background:'+rgba(h.cor,.16)+'">'+(h.icon||'•')+'</div><div class="cname">'+esc(h.nome)+(done?'<span class="doneflag"><i class="ti ti-circle-check-filled"></i></span>':'')+'</div>'+(h.cat?'<div class="ccat">'+esc(h.cat)+'</div>':'')+(ml?'<div class="cmeta">'+ml+'</div>':'')+body+coach+'<div class="nav">'+backBtn+'<div class="act">'+act+'</div><div class="nav-go">'+go+'</div></div></div><div class="hint">deslize ← → para navegar</div>';
+  box.innerHTML=head+'<div class="'+cls+'"><div class="nav">'+backBtn+'<div class="act">'+act+'</div><div class="nav-go">'+go+'</div></div><div class="step">'+(idx+1)+' / '+queue.length+'</div><div class="cardic" style="background:'+rgba(h.cor,.16)+'">'+(h.icon||'•')+'</div><div class="cname">'+esc(h.nome)+(done?'<span class="doneflag"><i class="ti ti-circle-check-filled"></i></span>':'')+'</div>'+(h.cat?'<div class="ccat">'+esc(h.cat)+'</div>':'')+(ml?'<div class="cmeta">'+ml+'</div>':'')+body+coach+'</div><div class="hint">deslize ← → para navegar</div>';
   var card=box.querySelector('.card');var x0=null,y0=null;
   card.addEventListener('touchstart',function(e){x0=e.touches[0].clientX;y0=e.touches[0].clientY;},{passive:true});
   card.addEventListener('touchend',function(e){if(x0===null)return;var dx=e.changedTouches[0].clientX-x0,dy=e.changedTouches[0].clientY-y0;if(Math.abs(dx)>55&&Math.abs(dx)>Math.abs(dy)*1.3){if(dx<0)next();else back();}x0=null;},{passive:true});
@@ -1596,14 +1708,14 @@ function salvarHabito(){
   if(tom==='personalizado'){var cs=document.getElementById('habTomS').value.trim(),cn=document.getElementById('habTomN').value.trim();h.tomCustom={s:cs||'Feito',n:cn||'Pular'};}
   if(editId){var i=habits.findIndex(function(x){return x.id===editId;});habits[i]=h;}
   else habits.push(h);
-  save();closeOv('ovHabito');toast(editId?'Hábito atualizado ✓':'Hábito criado ✓');renderHabitos();
+  save();closeOv('ovHabito');toast(editId?'Hábito atualizado ✓':'Hábito criado ✓');if(tab==='foco')render();else renderHabitos();
 }
 function excluirHabito(){
   if(!editId)return;
   if(!confirm('Excluir este hábito? Os registros dele também somem.'))return;
   habits=habits.filter(function(x){return x.id!==editId;});
   for(var d in logs){if(logs[d][editId])delete logs[d][editId];}
-  save();closeOv('ovHabito');toast('Hábito excluído');renderHabitos();
+  save();closeOv('ovHabito');toast('Hábito excluído');if(tab==='foco')render();else renderHabitos();
 }
 
 /* ===== export / import ===== */
