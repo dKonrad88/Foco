@@ -166,6 +166,11 @@ body.light .card{box-shadow:0 10px 30px rgba(20,40,80,.1)}
 .lpanel{padding:.2rem .9rem 1rem;border-top:1px solid var(--border);animation:lpan .22s ease}
 .lpanel .atalhos{margin-top:.8rem}
 @keyframes lpan{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.ldone{display:flex;align-items:center;gap:.7rem;padding:.8rem .95rem;border-radius:15px;background:linear-gradient(135deg,rgba(90,164,105,.16),rgba(90,164,105,.05));border:1px solid rgba(90,164,105,.4);animation:lpan .3s ease}
+.ldone-ic{width:38px;height:38px;border-radius:11px;background:rgba(90,164,105,.2);color:var(--green);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0}
+.ldone-tx{display:flex;flex-direction:column;line-height:1.2;min-width:0}
+.ldone-tx b{font-size:.92rem;font-weight:800;color:var(--text)}
+.ldone-tx span{font-size:.74rem;color:var(--muted);font-weight:500;margin-top:1px}
 .cele{position:fixed;inset:0;z-index:80;display:flex;align-items:flex-end;justify-content:center;padding:0 16px 86px;pointer-events:none}
 .cele-card{transform:translateY(22px);opacity:0;transition:transform .3s cubic-bezier(.2,1.3,.4,1),opacity .22s;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:.85rem 1.15rem;text-align:center;box-shadow:0 14px 40px rgba(0,0,0,.4);max-width:92%;pointer-events:auto}
 .cele.on .cele-card{transform:translateY(0);opacity:1}
@@ -1026,7 +1031,9 @@ function renderLista(){
   var sc=scope();
   if(!sc.length){box.innerHTML=head+'<div class="empty"><i class="ti ti-'+(catFilter==='__hoje__'?'circle-check':'filter')+'"></i>'+(catFilter==='__hoje__'?'Nada esperado pra hoje. Dia leve 🎉':'Nenhum hábito nesta categoria.')+'</div>';return;}
   var byCat={};sc.forEach(function(h){var c=catKey(h);(byCat[c]=byCat[c]||[]).push(h);});
+  var scA=sc.filter(function(h){return !isEvitar(h);}),dn=scA.filter(isDone).length,den=scA.length;
   var html='<div class="lista">';
+  if(den>0&&dn>=den)html+='<div class="ldone"><div class="ldone-ic"><i class="ti ti-confetti"></i></div><div class="ldone-tx"><b>Tudo feito! 🎉</b><span>'+dn+' de '+den+' no dia. Pode respirar.</span></div></div>';
   catOrder().forEach(function(c){var m=byCat[c];if(!m||!m.length)return;
     html+='<div class="lcat"><span class="lcat-dot" style="background:'+catColor(c)+'"></span>'+esc(c||'Sem categoria')+'</div>';
     m.forEach(function(h){html+=listRow(h);});
