@@ -29,9 +29,10 @@
 - Funções-base: `migrate()` (sobe versões antigas), `normalizeGrouped()` (normaliza), `recount()` (recalcula), `save()`/`load()`, `applyTheme()`/`curTheme()`, `enter()` (entra no dia).
 
 ## Relação com o HUB Pessoal (acoplamento intencional)
-- O **HUB embute o Foco**: a aba "Habit Tracker" do HUB é um `<iframe id="focoFrame" src="https://dkonrad88.github.io/Foco/">`. Como é **mesmo origin** (`dkonrad88.github.io`), o iframe herda login/sessão automaticamente.
+- O **HUB lê a tabela `foco_state` direto** e renderiza um **dashboard desktop próprio** (módulo `FOCO` no `index.html` do hubpessoal, container `#focoDash`). **Read-only** — só o Foco grava. Versão anterior usava iframe; foi substituída por render nativo desktop (o usuário quer ver no Mac, não a telinha mobile).
+- ⚠️ **Acoplamento de schema:** o HUB **porta verbatim** as funções de domínio do Foco (`inPeriod, isDoneLog, metaProgress, metaLine, cleanStreak, streakSoft, expectedToday, cadence, catOrder…`) e os campos do hábito/log (`tipo/tom/periodo/alvo/unidade/cat/desde` · log `valor/feito/items/recaida`). **Se mudar o schema de hábito/log ou essas funções aqui no Foco, o dashboard do HUB pode divergir** — avisar/replicar no `FOCO` do hubpessoal. A leitura é `sb.from('foco_state').select('key,value')` com chaves `habits`(array)/`logs`(objeto data→id)/`counter`.
 - **O Foco é a fonte única de hábitos.** O tracker antigo do HUB (`ht*`) foi aposentado.
-- ⚠️ **Por isso:** não quebrar a URL pública nem exigir login separado. Mudanças que afetem como o Foco renderiza dentro de um iframe (altura, viewport mobile) podem impactar o HUB. O HUB **não** lê `foco_state` diretamente — só embute a tela.
+- Login: mesmo Supabase/origin → a sessão do HUB já autentica a leitura de `foco_state` (mesma conta).
 
 ## Fluxo entre as duas máquinas
 - Usuário diz **"tô no PC da Empresa"** ou **"tô no Mac"**. **Mac (casa)** = máquina canônica.
