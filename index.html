@@ -124,6 +124,7 @@ body.light .phone{box-shadow:0 0 0 8px #2a3344,0 30px 70px rgba(0,0,0,.35)}
 .ladd.done{background:var(--green);border-color:var(--green);color:#fff}
 .ladd.open{background:rgba(24,95,165,.16);border-color:var(--blue)}
 .ladd.slip{background:var(--danger);border-color:var(--danger);color:#fff}
+.lrow.swiping .ladd,.lrow.swiped .ladd{opacity:0;pointer-events:none}
 .lpanel{padding:.2rem .9rem 1rem;border-top:1px solid var(--border);animation:lpan .22s ease}
 .lpanel .atalhos{margin-top:.8rem}
 @keyframes lpan{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
@@ -338,7 +339,7 @@ body.light .badge-warn{color:#8a5d00}
   <div class="appbar">
     <div class="appbar-top">
       <div class="appbar-ic" id="themeBtn" title="Tema"><i class="ti ti-moon" id="themeIc"></i></div>
-      <div class="appbar-tt"><b>Habit Tracker<span class="flag-br"><svg class="br-flag" viewBox="0 0 30 21" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Bandeira do Brasil"><rect width="30" height="21" rx="2.5" fill="#009C3B"/><polygon points="15,2.4 27.2,10.5 15,18.6 2.8,10.5" fill="#FEDD00"/><circle cx="15" cy="10.5" r="4.4" fill="#002776"/><path d="M11 9.6 Q15 7.8 19 9.9" stroke="#fff" stroke-width="0.9" fill="none"/></svg></span></b><span>modo Foco</span></div>
+      <div class="appbar-tt"><b>Habit Tracker<span class="flag-br"><svg class="br-flag" viewBox="0 0 30 21" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Bandeira do Brasil"><rect width="30" height="21" rx="2.5" fill="#009C3B"/><polygon points="15,2.4 27.2,10.5 15,18.6 2.8,10.5" fill="#FEDD00"/><circle cx="15" cy="10.5" r="4.4" fill="#002776"/><path d="M11 9.6 Q15 7.8 19 9.9" stroke="#fff" stroke-width="0.9" fill="none"/></svg></span></b><span>hábitos do dia</span></div>
       <div class="appbar-ic" onclick="openCloud()" title="Sincronização" id="syncBtn"><i class="ti ti-cloud" id="syncIc"></i></div>
       <div class="appbar-ic" onclick="openMenu()" title="Ajustes"><i class="ti ti-settings"></i></div>
     </div>
@@ -956,17 +957,17 @@ function listAdd(id){
 function listZerar(id){var h=H(id);if(h&&isEvitar(h)){var l=L(id);if(l.recaida){l.recaida=false;save();toast(pick('desfeito'));}render();return;}desfazer(id);}
 function attachListSwipe(){
   var rows=document.querySelectorAll('.lista .lrow'),openRow=null;
-  function close(r){if(!r)return;var fg=r.querySelector('.lrow-fg');if(fg){fg.style.transition='';fg.style.transform='';}r.classList.remove('swiped');}
+  function close(r){if(!r)return;var fg=r.querySelector('.lrow-fg');if(fg){fg.style.transition='';fg.style.transform='';}r.classList.remove('swiped','swiping');}
   Array.prototype.forEach.call(rows,function(row){
     var fg=row.querySelector('.lrow-fg'),bg=row.querySelector('.lrow-bg');if(!fg||!bg)return;
     var x0=null,y0=null,dx=0,drag=false,max=130;
     fg.addEventListener('touchstart',function(e){x0=e.touches[0].clientX;y0=e.touches[0].clientY;dx=0;drag=false;max=bg.offsetWidth||130;fg.style.transition='none';},{passive:true});
     fg.addEventListener('touchmove',function(e){if(x0===null)return;var ddx=e.touches[0].clientX-x0,ddy=e.touches[0].clientY-y0;
-      if(!drag){if(Math.abs(ddx)>8&&Math.abs(ddx)>Math.abs(ddy)*1.2){drag=true;if(openRow&&openRow!==row)close(openRow);}else if(Math.abs(ddy)>10){x0=null;return;}}
+      if(!drag){if(Math.abs(ddx)>8&&Math.abs(ddx)>Math.abs(ddy)*1.2){drag=true;row.classList.add('swiping');if(openRow&&openRow!==row)close(openRow);}else if(Math.abs(ddy)>10){x0=null;return;}}
       if(drag){var base=row.classList.contains('swiped')?-max:0;dx=Math.max(-max-22,Math.min(0,base+ddx));fg.style.transform='translateX('+dx+'px)';}
     },{passive:true});
-    fg.addEventListener('touchend',function(){if(x0===null)return;fg.style.transition='';
-      if(drag){if(dx<-max/2){fg.style.transform='translateX(-'+max+'px)';row.classList.add('swiped');openRow=row;}else{close(row);if(openRow===row)openRow=null;}}
+    fg.addEventListener('touchend',function(){if(x0===null)return;fg.style.transition='';row.classList.remove('swiping');
+      if(drag){if(dx<-max/2){fg.style.transform='translateX(-'+max+'px)';row.classList.add('swiped');openRow=row;var p=row.querySelector('.lpanel');if(p){p.remove();_listOpen=null;}}else{close(row);if(openRow===row)openRow=null;}}
       x0=null;},{passive:true});
     fg.addEventListener('click',function(e){if(row.classList.contains('swiped')){e.preventDefault();e.stopPropagation();close(row);if(openRow===row)openRow=null;}},true);
   });
@@ -1426,7 +1427,7 @@ function renderHabitos(){
   if(habView==='semana'){box.innerHTML=seg+renderSemana();return;}
   if(habView==='mes'){box.innerHTML=seg+renderMes();return;}
   if(habView==='ano'){box.innerHTML=seg+renderAno();return;}
-  var html='<div class="hb-intro">Toque um hábito para <b>editar</b> · arraste pelo punho <i class="ti ti-grip-vertical"></i> para reordenar dentro da categoria. Esta é a ordem do modo Foco.</div>';
+  var html='<div class="hb-intro">Toque um hábito para <b>editar</b> · arraste pelo punho <i class="ti ti-grip-vertical"></i> para reordenar dentro da categoria. Esta é a ordem da lista.</div>';
   catOrder().forEach(function(c){
     var membros=habits.filter(function(h){return catKey(h)===c;});
     html+='<div class="hgroup"><div class="hgroup-h"><span class="hgroup-dot" style="background:'+catColor(c)+'"></span>'+esc(c||'Sem categoria')+'<span class="hgroup-n">'+membros.length+'</span></div><div class="hsec" data-cat="'+esc(c)+'">'
