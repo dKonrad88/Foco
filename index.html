@@ -1327,7 +1327,7 @@ function buildInsights(P){
   }else locked.push({need:14-actN,t:'Correlações entre hábitos',s:'libera com 14 dias de registros — faltam '+(14-actN)+'.'});
 
   out.sort(function(x,z){return x.p-z.p;});
-  return {cards:out.slice(0,14),locked:locked};
+  return {cards:out.slice(0,5),locked:locked};
 }
 var insTab='resumo';
 function setInsTab(t){insTab=t;renderInsights();}
