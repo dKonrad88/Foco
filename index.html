@@ -388,15 +388,10 @@ body.light .badge-warn{color:#8a5d00}
         <div class="fg">
           <label>Estilo de resposta</label>
           <select id="habTom" onchange="tomChange()">
-            <option value="padrao">Padrão · Marcar feito / Pular</option>
+            <option value="padrao">Padrão · marcar feito no dia</option>
             <option value="evitar">Evitar · vício ou hábito ruim</option>
-            <option value="personalizado">Personalizado · eu escolho os textos</option>
           </select>
-          <div class="hint" id="tomHint" style="text-align:left;margin-top:.4rem;opacity:.85">Define os dois botões do card no modo Foco.</div>
-          <div id="boxTomCustom" class="hide frow" style="margin-top:.6rem">
-            <div class="fg"><label>Botão de feito</label><input id="habTomS" type="text" placeholder="Ex.: Mandei bem" maxlength="22"></div>
-            <div class="fg"><label>Botão de pular</label><input id="habTomN" type="text" placeholder="Ex.: Hoje não" maxlength="22"></div>
-          </div>
+          <div class="hint" id="tomHint" style="text-align:left;margin-top:.4rem;opacity:.85">Hábito comum — toque + na lista pra marcar feito no dia.</div>
         </div>
       </div>
 
@@ -1503,12 +1498,11 @@ var editId=null, tmpItems=[];
 function refreshCatList(){document.getElementById('catList').innerHTML=cats().filter(function(c){return c!=='all';}).map(function(c){return '<option value="'+esc(c)+'">';}).join('');}
 function tipoChange(){var t=document.getElementById('habTipo').value;document.getElementById('boxNumero').classList.toggle('hide',t!=='numero');document.getElementById('boxItem').classList.toggle('hide',t!=='item');document.getElementById('boxBool').classList.toggle('hide',t!=='bool');tomChange();}
 function tomChange(){
-  var t=document.getElementById('habTipo').value,tom=document.getElementById('habTom').value,ev=(t==='bool'&&tom==='evitar'),pers=(t==='bool'&&tom==='personalizado');
+  var t=document.getElementById('habTipo').value,tom=document.getElementById('habTom').value,ev=(t==='bool'&&tom==='evitar');
   var lab=document.getElementById('alvoLabel'),inp=document.getElementById('habAlvo'),h=document.getElementById('tomHint');
-  document.getElementById('boxTomCustom').classList.toggle('hide',!pers);
   if(lab)lab.textContent=ev?'Máx. de deslizes (Opcional)':'Meta — alvo (Opcional)';
   if(inp)inp.placeholder=ev?'Ex.: 4':'Ex.: 60';
-  if(h)h.textContent=ev?'Limpo por padrão — você só marca quando escorrega. A meta vira o teto de deslizes do período.':(pers?'Escreva os textos dos dois botões do card.':'Define os dois botões do card no modo Foco.');
+  if(h)h.textContent=ev?'Limpo por padrão — você só marca quando escorrega. A meta vira o teto de deslizes do período.':'Hábito comum — toque + na lista pra marcar feito no dia.';
 }
 function renderItemChips(){
   var unitEl=document.getElementById('habItemUnid');var unit=unitEl?(unitEl.value||'').trim():'';var isQ=!!unit;var suf=isQ?esc(unit):'dias';
@@ -1530,7 +1524,6 @@ function novoHabito(){
   document.getElementById('habAtalhos').value='';document.getElementById('habRotulo').value='';
   document.getElementById('habItemUnid').value='';document.getElementById('habItemAtalhos').value='';
   document.getElementById('habTom').value='padrao';
-  document.getElementById('habTomS').value='';document.getElementById('habTomN').value='';
   document.getElementById('habAlvo').value='';document.getElementById('habPeriodo').value='mes';
   document.getElementById('habDel').classList.add('hide');
   renderCores();renderItemChips();tipoChange();refreshCatList();openOv('ovHabito');
@@ -1549,8 +1542,7 @@ function editarHabito(id){
   document.getElementById('habItemUnid').value=(isItem?(h.unidade||''):'');
   document.getElementById('habItemAtalhos').value=(isItem?(h.atalhos||[]).join(', '):'');
   document.getElementById('habRotulo').value=h.rotulo||'';
-  document.getElementById('habTom').value=(h.tipo==='bool'?(h.tom||'padrao'):'padrao');
-  document.getElementById('habTomS').value=(h.tomCustom&&h.tomCustom.s)||'';document.getElementById('habTomN').value=(h.tomCustom&&h.tomCustom.n)||'';
+  document.getElementById('habTom').value=(h.tipo==='bool'&&h.tom==='evitar'?'evitar':'padrao');
   document.getElementById('habAlvo').value=h.alvo||'';document.getElementById('habPeriodo').value=h.periodo||'mes';
   document.getElementById('habDel').classList.remove('hide');
   renderCores();renderItemChips();tipoChange();refreshCatList();openOv('ovHabito');
@@ -1576,7 +1568,6 @@ function salvarHabito(){
     alvo:!isNaN(alvo)&&alvo>0?alvo:0,periodo:document.getElementById('habPeriodo').value
   };
   if(tom==='evitar')h.desde=(prev&&prev.desde)?prev.desde:today();
-  if(tom==='personalizado'){var cs=document.getElementById('habTomS').value.trim(),cn=document.getElementById('habTomN').value.trim();h.tomCustom={s:cs||'Feito',n:cn||'Pular'};}
   if(editId){var i=habits.findIndex(function(x){return x.id===editId;});habits[i]=h;}
   else habits.push(h);
   save();closeOv('ovHabito');toast(editId?'Hábito atualizado ✓':'Hábito criado ✓');if(tab==='foco')render();else renderHabitos();
