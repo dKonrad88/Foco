@@ -109,7 +109,7 @@ body.light .phone{box-shadow:0 0 0 8px #2a3344,0 30px 70px rgba(0,0,0,.35)}
 .lrow{border:1px solid var(--border);border-radius:15px;background:var(--surface);overflow:hidden;transition:border-color .15s}
 .lrow.done{border-color:rgba(90,164,105,.4)}
 .lrow-head{position:relative;overflow:hidden}
-.lrow-bg{position:absolute;top:0;right:0;bottom:0;display:flex;align-items:stretch}
+.lrow-bg{position:absolute;top:0;right:0;bottom:0;display:flex;align-items:stretch;opacity:0;pointer-events:none;transition:opacity .12s}
 .lrow-act{width:65px;border:none;display:flex;align-items:center;justify-content:center;font-size:1.25rem;color:#fff;cursor:pointer}
 .lrow-act.edit{background:var(--blue)} .lrow-act.zero{background:var(--danger)}
 .lrow-fg{position:relative;display:flex;align-items:center;gap:.3rem;background:var(--surface);padding:.35rem .6rem .35rem .35rem;touch-action:pan-y;will-change:transform}
@@ -125,6 +125,7 @@ body.light .phone{box-shadow:0 0 0 8px #2a3344,0 30px 70px rgba(0,0,0,.35)}
 .ladd.open{background:rgba(24,95,165,.16);border-color:var(--blue)}
 .ladd.slip{background:var(--danger);border-color:var(--danger);color:#fff}
 .lrow.swiping .ladd,.lrow.swiped .ladd{opacity:0;pointer-events:none}
+.lrow.swiping .lrow-bg,.lrow.swiped .lrow-bg{opacity:1;pointer-events:auto}
 .lpanel{padding:.2rem .9rem 1rem;border-top:1px solid var(--border);animation:lpan .22s ease}
 .lpanel .atalhos{margin-top:.8rem}
 @keyframes lpan{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
