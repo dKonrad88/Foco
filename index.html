@@ -5,12 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Foco · Hábitos</title>
 <!-- PWA / iOS -->
+<meta name="theme-color" content="#185FA5">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Foco">
-<meta name="theme-color" content="#0d3d6b">
-<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Crect width='180' height='180' rx='40' fill='%23185FA5'/%3E%3Ctext x='90' y='124' font-size='96' text-anchor='middle'%3E%F0%9F%94%A5%3C/text%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="manifest" href="manifest.json">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.11.0/dist/tabler-icons.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1749,6 +1751,10 @@ document.addEventListener('visibilitychange',function(){if(document.hidden)retur
 cloudInit();
 updateSync();
 if(!reviewBoot())setTimeout(celeEvitarBoot,900);
+</script>
+<script>
+/* PWA: registra o service worker (não afeta a lógica do app) */
+if('serviceWorker' in navigator){window.addEventListener('load',function(){try{navigator.serviceWorker.register('./sw.js').catch(function(e){console.warn('SW reg falhou',e);});}catch(e){console.warn('SW indisponível',e);}});}
 </script>
 </body>
 </html>
