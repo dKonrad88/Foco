@@ -16,36 +16,25 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.11.0/dist/tabler-icons.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#262522;--surface:#1c1b19;--surface2:#322f2b;--border:#3a3733;
   --text:#ece9e3;--muted:#9c958b;--blue:#185FA5;--blue2:#0d3d6b;
-  --danger:#e0556b;--green:#5aa469;--card:var(--surface);
+  --danger:#e0556b;--green:#1a7a8a;--card:var(--surface);
 }
 body.light{
   --bg:#f0f2f5;--surface:#fff;--surface2:#e8eaed;--border:#dde1e7;
-  --text:#1a1a2e;--muted:#6b7280;--green:#4c9a5d;
+  --text:#1a1a2e;--muted:#6b7280;--green:#1a7a8a;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%}
 body{
-  font-family:'Manrope',system-ui,sans-serif;color:var(--text);
+  font-family:'Inter',sans-serif;color:var(--text);
   background:radial-gradient(900px 600px at 50% -10%,rgba(255,255,255,.04),transparent 60%),radial-gradient(700px 500px at 100% 110%,rgba(255,255,255,.025),transparent 55%),#161513;
   display:flex;align-items:center;justify-content:center;padding:14px;
 }
 body.light{background:radial-gradient(900px 600px at 50% -10%,rgba(24,95,165,.18),transparent 60%),radial-gradient(700px 500px at 100% 110%,rgba(13,61,107,.12),transparent 55%),#c9d3e0}
-body.copa{
-  --bg:#f0f2f5;--surface:#fff;--surface2:#e8eaed;--border:#dde1e7;
-  --text:#1a1a2e;--muted:#6b7280;--blue:#009C3B;--blue2:#005c1f;--green:#009C3B;
-}
-body.copa{background:radial-gradient(900px 600px at 50% -10%,rgba(0,156,59,.16),transparent 60%),#c9d3e0}
-body.copa .phone{box-shadow:0 0 0 8px #2a3344,0 30px 70px rgba(0,0,0,.35)}
-.flag-br{display:none;margin-left:.4rem;line-height:0}
-body.copa .flag-br{display:inline-flex;align-items:center;vertical-align:middle}
-.flag-br .br-flag{height:22px;width:auto;border-radius:2px;box-shadow:0 1px 2px rgba(0,0,0,.35)}
-body.dark .statusbar{background:#1c1b19}
-body.dark .appbar{background:linear-gradient(135deg,#2a2926,#37352f);box-shadow:0 4px 14px rgba(0,0,0,.45)}
 
 .phone{
   width:min(100%,392px);height:min(94vh,840px);background:var(--bg);border-radius:38px;
@@ -66,7 +55,7 @@ body.standalone .statusbar{display:none}
 .statusbar{height:38px;display:flex;align-items:center;justify-content:space-between;padding:0 22px;font-size:.78rem;font-weight:700;background:var(--blue2);color:#fff;flex-shrink:0}
 .statusbar .si{display:flex;align-items:center;gap:5px;font-size:.9rem}
 
-.appbar{background:linear-gradient(135deg,var(--blue2),var(--blue));color:#fff;padding:.55rem .85rem .7rem;flex-shrink:0;box-shadow:0 4px 14px rgba(13,61,107,.4)}
+.appbar{background:linear-gradient(135deg,#0d3d6b,#185FA5 55%,#1a7a8a);color:#fff;padding:.55rem .85rem .7rem;flex-shrink:0;box-shadow:0 4px 14px rgba(13,61,107,.4)}
 .appbar-top{display:flex;align-items:center;gap:.5rem}
 .appbar-ic{width:34px;height:34px;border-radius:11px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.14);font-size:1.15rem;cursor:pointer;flex-shrink:0;transition:.15s}
 .appbar-ic:active{transform:scale(.9);background:rgba(255,255,255,.24)}
@@ -117,14 +106,14 @@ body.standalone .statusbar{display:none}
 .lista{display:flex;flex-direction:column;gap:.5rem}
 .lcat{display:flex;align-items:center;gap:.45rem;font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);padding:.5rem .3rem .1rem}
 .lcat-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.lrow{border:1px solid var(--border);border-radius:15px;background:var(--surface);overflow:hidden;transition:border-color .15s}
-.lrow.done{border-color:rgba(90,164,105,.4)}
+.lrow{border:1px solid var(--border);border-radius:14px;background:var(--surface);overflow:hidden;transition:border-color .15s}
+.lrow.done{border-color:rgba(26,122,138,.4)}
 .lrow-head{position:relative;overflow:hidden}
 .lrow-bg{position:absolute;top:0;right:0;bottom:0;display:flex;align-items:stretch;opacity:0;pointer-events:none;transition:opacity .12s}
 .lrow-act{width:65px;border:none;display:flex;align-items:center;justify-content:center;font-size:1.25rem;color:#fff;cursor:pointer}
 .lrow-act.edit{background:var(--blue)} .lrow-act.zero{background:var(--danger)}
 .lrow-fg{position:relative;display:flex;align-items:center;gap:.3rem;background:var(--surface);padding:.35rem .6rem .35rem .35rem;touch-action:pan-y;will-change:transform}
-.lrow.done .lrow-fg{background:linear-gradient(180deg,rgba(90,164,105,.08),var(--surface))}
+.lrow.done .lrow-fg{background:linear-gradient(180deg,rgba(26,122,138,.08),var(--surface))}
 .lrow-main{flex:1;display:flex;align-items:center;gap:.7rem;padding:.45rem .3rem;min-width:0;cursor:pointer}
 .lrow-ic{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0}
 .lrow-tx{min-width:0}
@@ -140,8 +129,8 @@ body.standalone .statusbar{display:none}
 .lpanel{padding:.2rem .9rem 1rem;border-top:1px solid var(--border);animation:lpan .22s ease}
 .lpanel .atalhos{margin-top:.8rem}
 @keyframes lpan{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
-.ldone{display:flex;align-items:center;gap:.7rem;padding:.8rem .95rem;border-radius:15px;background:linear-gradient(135deg,rgba(90,164,105,.16),rgba(90,164,105,.05));border:1px solid rgba(90,164,105,.4);animation:lpan .3s ease}
-.ldone-ic{width:38px;height:38px;border-radius:11px;background:rgba(90,164,105,.2);color:var(--green);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0}
+.ldone{display:flex;align-items:center;gap:.7rem;padding:.8rem .95rem;border-radius:14px;background:linear-gradient(135deg,rgba(26,122,138,.16),rgba(26,122,138,.05));border:1px solid rgba(26,122,138,.4);animation:lpan .3s ease}
+.ldone-ic{width:38px;height:38px;border-radius:11px;background:rgba(26,122,138,.2);color:var(--green);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0}
 .ldone-tx{display:flex;flex-direction:column;line-height:1.2;min-width:0}
 .ldone-tx b{font-size:.92rem;font-weight:800;color:var(--text)}
 .ldone-tx span{font-size:.74rem;color:var(--muted);font-weight:500;margin-top:1px}
@@ -291,11 +280,11 @@ body.light .badge-warn{color:#8a5d00}
 .ins-stat small{display:block;font-size:.62rem;color:var(--muted);font-weight:700;margin-bottom:.15rem}
 .ins-stat b{font-size:1.15rem}
 .ins{display:flex;gap:.6rem;border:1px solid var(--border);border-radius:14px;background:var(--surface);padding:.75rem .8rem;margin-bottom:.55rem}
-.ins-win{background:rgba(63,185,80,.13);border-color:rgba(63,185,80,.4)}
+.ins-win{background:rgba(26,122,138,.13);border-color:rgba(26,122,138,.4)}
 .ins-warn{background:rgba(214,158,46,.13);border-color:rgba(214,158,46,.45)}
 .ins-locked{background:var(--surface2);border-style:dashed;opacity:.7}
 .ins-ic{width:34px;height:34px;border-radius:9px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:1.05rem;flex:0 0 auto}
-.ins-win .ins-ic{background:rgba(63,185,80,.18)}
+.ins-win .ins-ic{background:rgba(26,122,138,.18)}
 .ins-warn .ins-ic{background:rgba(214,158,46,.18)}
 .ins-bd{min-width:0;flex:1}
 .ins-t{font-weight:700;font-size:.87rem;line-height:1.3}
@@ -351,7 +340,7 @@ body.light .badge-warn{color:#8a5d00}
   <div class="appbar">
     <div class="appbar-top">
       <div class="appbar-ic" id="themeBtn" title="Tema"><i class="ti ti-moon" id="themeIc"></i></div>
-      <div class="appbar-tt"><b>Habit Tracker<span class="flag-br"><svg class="br-flag" viewBox="0 0 30 21" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Bandeira do Brasil"><rect width="30" height="21" rx="2.5" fill="#009C3B"/><polygon points="15,2.4 27.2,10.5 15,18.6 2.8,10.5" fill="#FEDD00"/><circle cx="15" cy="10.5" r="4.4" fill="#002776"/><path d="M11 9.6 Q15 7.8 19 9.9" stroke="#fff" stroke-width="0.9" fill="none"/></svg></span></b><span>hábitos do dia</span></div>
+      <div class="appbar-tt"><b>Habit Tracker</b><span>hábitos do dia</span></div>
       <div class="appbar-ic" onclick="openCloud()" title="Sincronização" id="syncBtn"><i class="ti ti-cloud" id="syncIc"></i></div>
       <div class="appbar-ic" onclick="openMenu()" title="Ajustes"><i class="ti ti-settings"></i></div>
     </div>
@@ -534,9 +523,9 @@ function tick(){document.getElementById('clock').textContent=new Date().toLocale
 tick();setInterval(tick,15000);
 
 /* ===== tema ===== */
-function applyTheme(t){if(t!=='light'&&t!=='copa')t='dark';document.body.classList.remove('light','dark','copa');document.body.classList.add(t);var ic={dark:'ti ti-moon',light:'ti ti-sun',copa:'ti ti-trophy'};document.getElementById('themeIc').className=ic[t];}
-function curTheme(){var c=document.body.classList;return c.contains('copa')?'copa':c.contains('light')?'light':'dark';}
-document.getElementById('themeBtn').onclick=function(){var seq=['dark','light','copa'];applyTheme(seq[(seq.indexOf(curTheme())+1)%seq.length]);save();};
+function applyTheme(t){if(t!=='light')t='dark';document.body.classList.remove('light','dark');document.body.classList.add(t);document.getElementById('themeIc').className=(t==='light'?'ti ti-sun':'ti ti-moon');}
+function curTheme(){return document.body.classList.contains('light')?'light':'dark';}
+document.getElementById('themeBtn').onclick=function(){applyTheme(curTheme()==='light'?'dark':'light');save();};
 
 /* ===== toast ===== */
 var _tt;function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(_tt);_tt=setTimeout(function(){t.classList.remove('show');},1900);}
