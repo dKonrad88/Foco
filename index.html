@@ -480,7 +480,7 @@ body.light .badge-warn{color:#8a5d00}
       <div id="cloudForm">
         <div class="fg"><label>E-mail</label><input id="cEmail" type="email" autocomplete="email" placeholder="voce@email.com"></div>
         <div class="fg"><label>Senha</label><input id="cPass" type="password" autocomplete="current-password" placeholder="mín. 6 caracteres"></div>
-        <div class="frow" style="gap:.5rem"><button class="btn" style="flex:1" onclick="cloudLogin()">Entrar</button><button class="btn btn-ghost" style="flex:1" onclick="cloudSignup()">Criar conta</button></div>
+        <div class="frow"><button class="btn" style="flex:1" onclick="cloudLogin()">Entrar</button></div>
         <div class="hint" style="margin-top:.5rem;opacity:.8">Mesma conta no iPhone e no Mac = mesmo histórico, com backup na nuvem.</div>
       </div>
       <div class="menu-item" id="cloudOut" onclick="cloudLogout()" style="display:none;margin-top:.4rem"><i class="ti ti-logout"></i><div>Sair da conta<small>Mantém os dados locais</small></div></div>
@@ -1745,7 +1745,7 @@ function cloudPushAll(now){
   },now?100:1500);
 }
 function cloudLogin(){if(!sb){cloudSet('Nuvem ainda carregando…','');return;}var em=(document.getElementById('cEmail').value||'').trim(),pw=document.getElementById('cPass').value||'';if(!em||!pw){cloudSet('Preencha e-mail e senha','warn');return;}cloudSet('Entrando…','');sb.auth.signInWithPassword({email:em,password:pw}).then(function(r){if(r.error){cloudSet('Falhou: '+r.error.message,'warn');return;}cloudUser=r.data.user;cloudSet('Conectado: '+cloudUser.email,'ok');var _dty=false;try{_dty=localStorage.getItem(LS+'dirty')==='1';}catch(e){}if(_dty&&confirm('Você tem mudanças locais ainda não sincronizadas. OK = enviar suas mudanças para a nuvem · Cancelar = baixar a nuvem (descarta as locais).')){cloudPushAll(true);}else{try{localStorage.removeItem(LS+'dirty');}catch(e){}cloudPull();}});}
-function cloudSignup(){if(!sb){cloudSet('Nuvem ainda carregando…','');return;}var em=(document.getElementById('cEmail').value||'').trim(),pw=document.getElementById('cPass').value||'';if(!em||pw.length<6){cloudSet('Senha de 6+ caracteres','warn');return;}cloudSet('Criando conta…','');sb.auth.signUp({email:em,password:pw}).then(function(r){if(r.error){cloudSet('Falhou: '+r.error.message,'warn');return;}if(r.data.session){cloudUser=r.data.user;cloudSet('Conectado: '+cloudUser.email,'ok');cloudPull();}else cloudSet('Conta criada — confirme o e-mail e clique Entrar','ok');});}
+function cloudSignup(){cloudSet('🔒 Cadastro fechado — este app é privado. Use "Entrar" com a sua conta.','warn');return;if(!sb){cloudSet('Nuvem ainda carregando…','');return;}var em=(document.getElementById('cEmail').value||'').trim(),pw=document.getElementById('cPass').value||'';if(!em||pw.length<6){cloudSet('Senha de 6+ caracteres','warn');return;}cloudSet('Criando conta…','');sb.auth.signUp({email:em,password:pw}).then(function(r){if(r.error){cloudSet('Falhou: '+r.error.message,'warn');return;}if(r.data.session){cloudUser=r.data.user;cloudSet('Conectado: '+cloudUser.email,'ok');cloudPull();}else cloudSet('Conta criada — confirme o e-mail e clique Entrar','ok');});}
 function cloudLogout(){if(!sb)return;sb.auth.signOut().then(function(){cloudUser=null;cloudSet('Não conectado','');toast('Saiu da conta (dados locais mantidos)');});}
 function openCloud(){closeOv('ovMenu');if(!CLOUD_ON){toast('Nuvem não configurada neste arquivo');return;}cloudRefreshUI();openOv('ovCloud');}
 
