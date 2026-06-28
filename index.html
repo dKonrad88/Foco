@@ -502,6 +502,7 @@ body.light .badge-warn{color:#8a5d00}
   <div class="overlay" id="ovMenu">
     <div class="modal">
       <h3><i class="ti ti-settings"></i> Ajustes</h3>
+      <div class="menu-item" onclick="appReload()"><i class="ti ti-refresh"></i><div>Atualizar app<small>Baixa a versão mais nova (sem precisar do Safari)</small></div></div>
       <div class="menu-item" onclick="openCloud()"><i class="ti ti-cloud"></i><div>Conta & sincronização<small id="cloudMenuSub">Backup e sync entre aparelhos</small></div></div>
       <div class="menu-item" onclick="openReviewCur()"><i class="ti ti-calendar-stats"></i><div>Retrospectiva do mês<small>Resumo e destaques do mês atual</small></div></div>
       <div class="menu-item" onclick="toggleSom()"><i class="ti ti-volume"></i><div>Som<small>Toque sonoro ao concluir e celebrar</small></div><span class="sw" id="somSw"></span></div>
@@ -1690,6 +1691,18 @@ function reviewBoot(){
 function openOv(id){document.getElementById(id).classList.add('show');}
 function closeOv(id){document.getElementById(id).classList.remove('show');}
 function openMenu(){syncSwitches();openOv('ovMenu');}
+function appReload(){
+  toast('Atualizando…');
+  var done=false;function go(){if(done)return;done=true;location.reload();}
+  try{
+    if('serviceWorker' in navigator && navigator.serviceWorker.getRegistrations){
+      navigator.serviceWorker.getRegistrations().then(function(rs){
+        return Promise.all(rs.map(function(r){return r.update().catch(function(){});}));
+      }).then(function(){setTimeout(go,350);},go);
+      setTimeout(go,2500); /* rede de segurança: recarrega mesmo se o SW travar */
+    } else { setTimeout(go,200); }
+  }catch(e){ go(); }
+}
 
 /* ===== NUVEM (Supabase) — camada opcional, offline-first =====
    Para ligar: cole sua Project URL e a anon public key abaixo. */
