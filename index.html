@@ -53,8 +53,8 @@ body.dark .appbar{background:linear-gradient(135deg,#2a2926,#37352f);box-shadow:
   box-shadow:0 0 0 8px #05080f,0 30px 70px rgba(0,0,0,.6),0 6px 18px rgba(0,0,0,.5);
 }
 body.light .phone{box-shadow:0 0 0 8px #2a3344,0 30px 70px rgba(0,0,0,.35)}
-/* App instalado (PWA tela cheia): desfaz o mockup de celular */
-@media (display-mode:standalone){
+/* No celular (app instalado OU Safari) desfaz o mockup; no desktop mantém */
+@media (display-mode:standalone),(max-width:480px){
   body{display:block;padding:0;background:var(--bg)}
   .phone{width:100%;max-width:none;height:100dvh;border:0;border-radius:0;box-shadow:none}
   .statusbar{display:none}
