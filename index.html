@@ -720,7 +720,7 @@ function fmt(n){n=Math.round(n*100)/100;return Number.isInteger(n)?n:(''+n).repl
 function setTab(t){tab=t;['foco','habitos','insights'].forEach(function(x){var el=document.getElementById('tab-'+x);if(el)el.classList.toggle('active',t===x);});if(t==='foco'){curDate=today();resumeFoco();}else if(t==='habitos')renderHabitos();else{insTab='resumo';renderInsights();}}
 
 /* ===== FOCO ===== */
-var catFilter='all',_listOpen=null;
+var catFilter='__hoje__',_listOpen=null;
 function toggleListOpen(id){_listOpen=(_listOpen===id)?null:id;render();}
 function cats(){var s=['__hoje__','all'];habits.forEach(function(h){var c=h.cat||'Sem categoria';if(s.indexOf(c)<0)s.push(c);});return s;}
 function scope(){if(catFilter==='__hoje__')return habits.filter(expectedToday);return habits.filter(function(h){return catFilter==='all'||(h.cat||'Sem categoria')===catFilter;});}
