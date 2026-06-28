@@ -53,6 +53,15 @@ body.dark .appbar{background:linear-gradient(135deg,#2a2926,#37352f);box-shadow:
   box-shadow:0 0 0 8px #05080f,0 30px 70px rgba(0,0,0,.6),0 6px 18px rgba(0,0,0,.5);
 }
 body.light .phone{box-shadow:0 0 0 8px #2a3344,0 30px 70px rgba(0,0,0,.35)}
+/* App instalado (PWA tela cheia): desfaz o mockup de celular */
+@media (display-mode:standalone){
+  body{display:block;padding:0;background:var(--bg)}
+  .phone{width:100%;max-width:none;height:100dvh;border:0;border-radius:0;box-shadow:none}
+  .statusbar{display:none}
+}
+body.standalone{display:block;padding:0;background:var(--bg)}
+body.standalone .phone{width:100%;max-width:none;height:100dvh;border:0;border-radius:0;box-shadow:none}
+body.standalone .statusbar{display:none}
 
 .statusbar{height:38px;display:flex;align-items:center;justify-content:space-between;padding:0 22px;font-size:.78rem;font-weight:700;background:var(--blue2);color:#fff;flex-shrink:0}
 .statusbar .si{display:flex;align-items:center;gap:5px;font-size:.9rem}
@@ -517,6 +526,8 @@ body.light .badge-warn{color:#8a5d00}
 </div>
 
 <script>
+/* PWA instalado: desfaz o mockup de celular (fallback p/ iOS sem @media display-mode) */
+try{if(window.navigator.standalone===true||(window.matchMedia&&matchMedia('(display-mode:standalone)').matches))document.body.classList.add('standalone');}catch(e){}
 /* ===== relógio ===== */
 function tick(){document.getElementById('clock').textContent=new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});}
 tick();setInterval(tick,15000);
