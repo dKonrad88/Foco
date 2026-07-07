@@ -327,6 +327,46 @@ body.light .badge-warn{color:#8a5d00}
 .ins-nav .hsg{flex:1;min-width:0;white-space:nowrap}
 @keyframes spin{to{transform:rotate(360deg)}}
 #syncBtn .spin{display:inline-block;animation:spin 1s linear infinite}
+/* ===== Metas anuais ===== */
+.mt-headline{font-size:.9rem;color:var(--muted);margin-bottom:.7rem} .mt-headline b{color:var(--text);font-weight:800}
+.mt-sum{display:flex;gap:.4rem;margin-bottom:1rem}
+.mt-chip{flex:1;min-width:0;background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:.5rem .2rem;text-align:center}
+.mt-chip b{display:block;font-size:1.2rem;font-weight:800;line-height:1;font-variant-numeric:tabular-nums} .mt-chip small{display:block;font-size:.55rem;color:var(--muted);text-transform:uppercase;letter-spacing:.02em;font-weight:700;margin-top:3px}
+.mt-chip.teal b{color:var(--green)} .mt-chip.blue b{color:#6ea8e0} .mt-chip.amber b{color:#f0a500} .mt-chip.red b{color:var(--danger)}
+.mt-cat{display:flex;align-items:center;gap:.5rem;padding:.7rem .3rem .4rem;cursor:pointer;user-select:none}
+.mt-cat-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.mt-cat-nm{font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.mt-cat-alert{font-size:.56rem;font-weight:800;color:#f0a500;background:rgba(240,165,0,.13);border-radius:999px;padding:.06rem .4rem;white-space:nowrap}
+.mt-cat-n{margin-left:auto;font-size:.6rem;font-weight:700;color:var(--muted);background:var(--surface2);border:1px solid var(--border);border-radius:999px;padding:.06rem .45rem}
+.mt-cat-chev{color:var(--muted);transition:transform .2s;display:inline-flex} .mt-cat-chev.open{transform:rotate(90deg)}
+.mt-row{background:var(--surface);border:1px solid var(--border);border-left-width:3px;border-radius:13px;margin-bottom:.5rem;overflow:hidden}
+.mt-row.st-teal{border-left-color:var(--green)} .mt-row.st-blue{border-left-color:var(--blue)} .mt-row.st-amber{border-left-color:#f0a500} .mt-row.st-red{border-left-color:var(--danger)}
+.mt-row-head{display:flex;align-items:center;gap:.6rem;padding:.65rem .8rem;cursor:pointer}
+.mt-ic{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
+.mt-rm{flex:1;min-width:0} .mt-rm-top{display:flex;align-items:center;gap:.4rem}
+.mt-nm{font-size:.92rem;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.mt-pill{font-size:.56rem;font-weight:800;text-transform:uppercase;padding:.14rem .42rem;border-radius:999px;white-space:nowrap;flex-shrink:0}
+.mt-pill.teal{background:rgba(26,122,138,.18);color:#5cc4d4} .mt-pill.blue{background:rgba(24,95,165,.2);color:#6ea8e0} .mt-pill.amber{background:rgba(240,165,0,.15);color:#f0a500} .mt-pill.red{background:rgba(224,85,107,.16);color:var(--danger)}
+.mt-mini{position:relative;height:6px;background:var(--surface2);border-radius:4px;margin-top:7px;overflow:hidden}
+.mt-mini i.f{position:absolute;left:0;top:0;bottom:0;border-radius:4px} .mt-mini i.f.teal{background:var(--green)} .mt-mini i.f.blue{background:var(--blue)} .mt-mini i.f.amber{background:#f0a500} .mt-mini i.f.red{background:var(--danger)}
+.mt-mini i.t{position:absolute;top:-1px;bottom:-1px;width:2px;background:rgba(236,233,227,.55)}
+.mt-proj{text-align:right;flex-shrink:0;line-height:1.05} .mt-proj b{font-size:1.02rem;font-weight:800;font-variant-numeric:tabular-nums} .mt-proj small{display:block;font-size:.55rem;color:var(--muted);white-space:nowrap}
+.mt-chev{color:var(--muted);flex-shrink:0;transition:transform .2s;display:inline-flex} .mt-chev.open{transform:rotate(90deg)}
+.mt-detail{padding:0 .8rem 1rem;border-top:1px solid var(--border)}
+.mt-stat{display:flex;gap:1.2rem;margin:.85rem 0} .mt-stat>div{font-size:.76rem;color:var(--muted)} .mt-stat b{display:block;font-size:1.25rem;font-weight:800;color:var(--text);line-height:1.1;font-variant-numeric:tabular-nums} .mt-stat b.teal{color:var(--green)} .mt-stat b.blue{color:#6ea8e0} .mt-stat b.amber{color:#f0a500} .mt-stat b.red{color:var(--danger)}
+.mt-track{position:relative;height:30px;background:var(--surface2);border-radius:9px;overflow:hidden}
+.mt-fill{position:absolute;left:0;top:0;bottom:0;border-radius:9px 0 0 9px} .mt-fill.teal{background:linear-gradient(90deg,rgba(26,122,138,.55),var(--green))} .mt-fill.blue{background:linear-gradient(90deg,rgba(24,95,165,.55),var(--blue))} .mt-fill.amber{background:linear-gradient(90deg,rgba(240,165,0,.5),#f0a500)} .mt-fill.red{background:linear-gradient(90deg,rgba(224,85,107,.5),var(--danger))}
+.mt-tick{position:absolute;top:0;bottom:0;width:2px;background:rgba(236,233,227,.35)} .mt-tick.meta{background:rgba(236,233,227,.7)}
+.mt-pace{position:absolute;top:-3px;bottom:-3px;width:0;border-left:2px dashed rgba(255,255,255,.85)} .mt-pace::after{content:'ritmo';position:absolute;top:-13px;left:50%;transform:translateX(-50%);font-size:.52rem;font-weight:700;color:rgba(255,255,255,.85)}
+.mt-cap{position:absolute;top:50%;width:11px;height:11px;border-radius:50%;background:#fff;transform:translate(-50%,-50%);box-shadow:0 0 0 3px var(--surface)}
+.mt-legend{display:flex;gap:.5rem;margin-top:11px} .mt-legend .lg{flex:1;display:flex;flex-direction:column;gap:1px;border-left:2px solid var(--border);padding-left:.5rem} .mt-legend .lg small{font-size:.56rem;text-transform:uppercase;letter-spacing:.03em;font-weight:800;color:var(--muted)} .mt-legend .lg b{font-size:.9rem;font-weight:800;font-variant-numeric:tabular-nums}
+.mt-legend .lg.c{border-color:#7a736a} .mt-legend .lg.c small{color:#b8b0a4} .mt-legend .lg.m{border-color:var(--blue)} .mt-legend .lg.m small{color:#6ea8e0} .mt-legend .lg.s{border-color:var(--green)} .mt-legend .lg.s small{color:#5cc4d4}
+.mt-note{font-size:.78rem;color:var(--muted);line-height:1.45;margin:.7rem 0 0} .mt-note b{color:var(--text)} .mt-banco.pos{color:var(--green);font-weight:800} .mt-banco.neg{color:#f0a500;font-weight:800}
+.mt-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:4px;margin-top:.8rem}
+.mt-cell{aspect-ratio:1;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:.66rem;background:var(--surface2);color:var(--muted)} .mt-cell small{font-size:.46rem;opacity:.7} .mt-cell.hit{background:rgba(26,122,138,.28);color:#8fd6e2;font-weight:800} .mt-cell.some{background:rgba(24,95,165,.22);color:#9cc3ea;font-weight:700} .mt-cell.future{opacity:.4} .mt-cell.now{outline:2px solid var(--blue);outline-offset:1px}
+.mt-levelup{display:flex;align-items:center;gap:.6rem;background:linear-gradient(135deg,rgba(26,122,138,.16),rgba(24,95,165,.08));border:1px solid rgba(26,122,138,.4);border-radius:11px;padding:.65rem .8rem;margin-top:.85rem} .mt-levelup span{flex:1;font-size:.78rem;line-height:1.35} .mt-levelup b{color:var(--green)} .mt-levelup button{background:var(--green);color:#fff;border:none;border-radius:9px;padding:.5rem .8rem;font-family:inherit;font-weight:800;font-size:.76rem;cursor:pointer;white-space:nowrap;flex-shrink:0}
+.mt-edit-btn{margin-top:.85rem;width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--muted);border-radius:11px;padding:.55rem;font-family:inherit;font-weight:700;font-size:.82rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.35rem}
+.mt-hint{font-size:.72rem;color:var(--muted);line-height:1.4;margin:-.3rem 0 .8rem} .mt-hint b{color:var(--text)}
 </style>
 </head>
 <body class="dark">
@@ -348,6 +388,7 @@ body.light .badge-warn{color:#8a5d00}
       <button class="htab active" id="tab-foco" onclick="setTab('foco')">Foco</button>
       <button class="htab" id="tab-habitos" onclick="setTab('habitos')">Hábitos</button>
       <button class="htab" id="tab-insights" onclick="setTab('insights')">Insights</button>
+      <button class="htab" id="tab-metas" onclick="setTab('metas')">Metas</button>
     </div>
   </div>
 
@@ -512,6 +553,24 @@ body.light .badge-warn{color:#8a5d00}
     </div>
   </div>
 
+  <div class="overlay" id="ovMeta">
+    <div class="modal">
+      <h3 id="metaTitle"><i class="ti ti-target-arrow"></i> Nova meta</h3>
+      <div class="fg" id="mHabRow"><label>Puxa do hábito</label><select id="mHab"></select></div>
+      <div class="mt-hint">No total do <b>ano</b>: <b>Compromisso</b> = mínimo aceitável · <b>Meta</b> = o ideal · <b>Superação</b> = a esticada.</div>
+      <div class="frow">
+        <div class="fg"><label>Compromisso</label><input id="mComp" type="number" inputmode="decimal" placeholder="ex.: 9"></div>
+        <div class="fg"><label>Meta</label><input id="mMeta" type="number" inputmode="decimal" placeholder="ex.: 12"></div>
+        <div class="fg"><label>Superação</label><input id="mSup" type="number" inputmode="decimal" placeholder="ex.: 15"></div>
+      </div>
+      <div class="mfoot">
+        <button class="btn btn-danger" id="mExcl" onclick="excluirMeta()">Excluir</button>
+        <button class="btn btn-ghost" onclick="closeOv('ovMeta')">Cancelar</button>
+        <button class="btn btn-primary" onclick="salvarMeta()">Salvar</button>
+      </div>
+    </div>
+  </div>
+
   <div class="toast" id="toast"></div>
 </div>
 
@@ -584,6 +643,7 @@ function syncSwitches(){var a=document.getElementById('somSw'),b=document.getEle
 function toggleSom(){somOn=!somOn;try{localStorage.setItem(LS+'som',somOn?'1':'0');}catch(e){}syncSwitches();if(somOn)sfx('feito');}
 function toggleVib(){vibOn=!vibOn;try{localStorage.setItem(LS+'vib',vibOn?'1':'0');}catch(e){}syncSwitches();if(vibOn)vibrate([15,30,15]);}
 var habits=[], logs={}, counter=1, tab='foco';
+var metas=[], metaOpen=null, metaCollapsed={}, editMetaId=null, metaCounter=1;
 var SEED=[
   {id:'h1',icon:'🏃',nome:'Corrida',cat:'Saúde & Energia',cor:'#185FA5',tipo:'item',rotulo:'Tênis',unidade:'km',atalhos:[5,8,10,21],items:[{nome:'Evo SL',meta:600},{nome:'Adios Pro 4',meta:600},{nome:'Supra 2',meta:600},{nome:'China',meta:600},{nome:'Zoom Fly 6',meta:600},{nome:'Alpha Fly 3',meta:600}],alvo:70,periodo:'mes'},
   {id:'h3',icon:'🏅',nome:'Provas / Meia maratona',cat:'Saúde & Energia',cor:'#185FA5',tipo:'bool',alvo:2,periodo:'semestre'},
@@ -629,6 +689,7 @@ function save(){try{
   localStorage.setItem(LS+'habits',JSON.stringify(habits));
   localStorage.setItem(LS+'logs',JSON.stringify(logs));
   localStorage.setItem(LS+'counter',String(counter));
+  localStorage.setItem(LS+'metas',JSON.stringify(metas));
   localStorage.setItem(LS+'theme',curTheme());
 }catch(e){toast('⚠️ Não consegui salvar (armazenamento bloqueado)');}
 try{localStorage.setItem(LS+'dirty','1');}catch(e){}
@@ -637,9 +698,10 @@ function load(){try{
   var h=localStorage.getItem(LS+'habits');
   if(h){habits=JSON.parse(h)||[];logs=JSON.parse(localStorage.getItem(LS+'logs')||'{}');}
   else{habits=JSON.parse(JSON.stringify(SEED));logs={};}
+  try{metas=JSON.parse(localStorage.getItem(LS+'metas')||'[]')||[];}catch(_e){metas=[];}
   applyTheme(localStorage.getItem(LS+'theme')||'dark');
 }catch(e){habits=JSON.parse(JSON.stringify(SEED));logs={};}
-recount();}
+recount();recountMetas();}
 
 /* ===== datas ===== */
 function iso(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
@@ -720,7 +782,7 @@ function metaLine(h){
 function fmt(n){n=Math.round(n*100)/100;return Number.isInteger(n)?n:(''+n).replace('.',',');}
 
 /* ===== navegação tabs ===== */
-function setTab(t){tab=t;['foco','habitos','insights'].forEach(function(x){var el=document.getElementById('tab-'+x);if(el)el.classList.toggle('active',t===x);});if(t==='foco'){curDate=today();resumeFoco();}else if(t==='habitos')renderHabitos();else{insTab='resumo';renderInsights();}}
+function setTab(t){tab=t;['foco','habitos','insights','metas'].forEach(function(x){var el=document.getElementById('tab-'+x);if(el)el.classList.toggle('active',t===x);});if(t==='foco'){curDate=today();resumeFoco();}else if(t==='habitos')renderHabitos();else if(t==='metas')renderMetas();else{insTab='resumo';renderInsights();}}
 
 /* ===== FOCO ===== */
 var catFilter='__hoje__',_listOpen=null;
@@ -1677,6 +1739,90 @@ function reviewBoot(){
   try{localStorage.setItem(LS+'lastMonth',curM);}catch(e){}
   return opened;
 }
+/* ===== METAS ANUAIS ===== */
+function recountMetas(){var mx=0;metas.forEach(function(m){var n=parseInt(String(m.id).replace(/[^0-9]/g,''),10);if(!isNaN(n)&&n>mx)mx=n;});metaCounter=mx+1;}
+function anoFrac(){var n=new Date(),y=n.getFullYear(),start=new Date(y,0,1);var days=((y%4===0&&y%100!==0)||y%400===0)?366:365;return Math.min(1,((n-start)/86400000+1)/days);}
+function anoAgg(h,ano){
+  var pref=ano+'-',vol=(h.tipo==='numero'||isQty(h)),mensal=[0,0,0,0,0,0,0,0,0,0,0,0];
+  for(var dt in logs){if(dt.indexOf(pref)!==0)continue;var l=logs[dt][h.id];if(!l)continue;var mo=parseInt(dt.slice(5,7),10)-1;
+    if(vol)mensal[mo]+=(parseFloat(l.valor)||0);else if(isDoneLog(h,l))mensal[mo]+=1;}
+  var total=0;for(var i=0;i<12;i++)total+=mensal[i];return {total:total,mensal:mensal,vol:vol};
+}
+function metaUnit(h){return (h.unidade&&String(h.unidade).trim())?String(h.unidade).trim():'';}
+function mfmt(n){return Math.round(n).toLocaleString('pt-BR');}
+function metaState(m){
+  var h=H(m.hid);if(!h)return null;
+  var ag=anoAgg(h,new Date().getFullYear()),frac=anoFrac(),feitos=ag.total,proj=frac>0?feitos/frac:0;
+  var c=proj>=m.sup?'teal':proj>=m.meta?'blue':proj>=m.comp?'amber':'red';
+  var t=c==='teal'?'Rumo à Superação':c==='blue'?'No ritmo da Meta':c==='amber'?'Atrás da Meta':'Abaixo do Compromisso';
+  return {h:h,ag:ag,frac:frac,feitos:feitos,proj:proj,c:c,t:t,banco:feitos-m.meta*frac,unit:metaUnit(h)};
+}
+function renderMetas(){
+  var box=document.getElementById('screen');
+  if(!metas.length){box.innerHTML='<div class="empty"><i class="ti ti-target-arrow"></i>Nenhuma meta anual ainda.<br><span style="font-size:.8rem;font-weight:500;color:var(--muted)">Metas puxam de um hábito e são batidas mês a mês, no total do ano.</span><button class="madd" onclick="novaMeta()">Criar primeira meta</button></div>';return;}
+  var ano=new Date().getFullYear(),states=[];
+  metas.forEach(function(m){var s=metaState(m);if(s)states.push({m:m,s:s});});
+  if(!states.length){box.innerHTML='<div class="empty"><i class="ti ti-target-arrow"></i>As metas estão ligadas a hábitos que não existem mais.<button class="madd" onclick="novaMeta()">Criar meta</button></div>';return;}
+  var cnt={teal:0,blue:0,amber:0,red:0};states.forEach(function(x){cnt[x.s.c]++;});
+  var head='<div class="mt-headline">Metas do ano · <b>'+ano+'</b></div>'
+    +'<div class="mt-sum"><div class="mt-chip"><b>'+states.length+'</b><small>metas</small></div>'
+    +'<div class="mt-chip teal"><b>'+cnt.teal+'</b><small>superação</small></div>'
+    +'<div class="mt-chip blue"><b>'+cnt.blue+'</b><small>no ritmo</small></div>'
+    +'<div class="mt-chip amber"><b>'+cnt.amber+'</b><small>atrás</small></div>'
+    +'<div class="mt-chip red"><b>'+cnt.red+'</b><small>abaixo</small></div></div>';
+  var cats=[];states.forEach(function(x){var c=catKey(x.s.h);if(cats.indexOf(c)<0)cats.push(c);});
+  var list=cats.map(function(cat){
+    var members=states.filter(function(x){return catKey(x.s.h)===cat;}),col=catColor(cat),isCol=!!metaCollapsed[cat];
+    var aten=members.filter(function(x){return x.s.c==='red'||x.s.c==='amber';}).length;
+    var hdr='<div class="mt-cat" onclick="togMetaCat(\''+jsq(cat)+'\')"><span class="mt-cat-dot" style="background:'+col+'"></span><span class="mt-cat-nm">'+(esc(cat)||'Sem categoria')+'</span>'
+      +(aten?'<span class="mt-cat-alert">'+aten+' precisa atenção</span>':'')
+      +'<span class="mt-cat-n">'+members.length+'</span><span class="mt-cat-chev'+(isCol?'':' open')+'"><i class="ti ti-chevron-right"></i></span></div>';
+    return hdr+(isCol?'':members.map(function(x){return metaRow(x.m,x.s);}).join(''));
+  }).join('');
+  box.innerHTML=head+'<div class="mt-list">'+list+'</div><button class="addbig" onclick="novaMeta()"><i class="ti ti-plus"></i> Nova meta</button>';
+}
+function metaRow(m,s){
+  var open=metaOpen===m.id,g=s.h,pS=function(v){return Math.min(100,v/m.sup*100);};
+  var head='<div class="mt-row-head" onclick="toggleMeta(\''+m.id+'\')">'
+    +'<div class="mt-ic" style="background:'+rgba(g.cor,.16)+'">'+(g.icon||'•')+'</div>'
+    +'<div class="mt-rm"><div class="mt-rm-top"><span class="mt-nm">'+esc(g.nome)+'</span><span class="mt-pill '+s.c+'">'+s.t+'</span></div>'
+      +'<div class="mt-mini"><i class="f '+s.c+'" style="width:'+pS(s.feitos)+'%"></i><i class="t" style="left:'+pS(m.meta)+'%"></i></div></div>'
+    +'<div class="mt-proj"><b>'+mfmt(s.proj)+'</b><small>proj / '+mfmt(m.meta)+'</small></div>'
+    +'<span class="mt-chev'+(open?' open':'')+'"><i class="ti ti-chevron-right"></i></span></div>';
+  return '<div class="mt-row st-'+s.c+(open?' open':'')+'">'+head+(open?metaDetail(m,s):'')+'</div>';
+}
+function metaDetail(m,s){
+  var pS=function(v){return Math.min(100,v/m.sup*100);},moNow=new Date().getMonth(),u=s.unit?' '+esc(s.unit):'';
+  var rest=11-moNow,faltaMeta=Math.max(0,m.meta-s.feitos),porMes=rest>0?faltaMeta/rest:faltaMeta,ritmoMes=m.meta/12,MI=['J','F','M','A','M','J','J','A','S','O','N','D'];
+  var grid=s.ag.mensal.map(function(v,i){var cls='mt-cell',txt='·';if(i<=moNow){txt=mfmt(v);cls+=v>=ritmoMes?' hit':(v>0?' some':'');}else cls+=' future';if(i===moNow)cls+=' now';return '<div class="'+cls+'"><small>'+MI[i]+'</small>'+txt+'</div>';}).join('');
+  var levelup=s.proj>=m.sup?'<div class="mt-levelup"><span>Projeção de <b>'+mfmt(s.proj)+'</b> encosta na Superação. <b>Subir a régua?</b></span><button onclick="event.stopPropagation();subirMeta(\''+m.id+'\')">Subir</button></div>':'';
+  var banco=s.banco>=0?'<span class="mt-banco pos">+'+mfmt(s.banco)+' no banco</span> · adiantado':'<span class="mt-banco neg">'+mfmt(s.banco)+'</span> · atrás do ritmo';
+  return '<div class="mt-detail">'
+    +'<div class="mt-stat"><div>feito<b>'+mfmt(s.feitos)+'</b><span>de '+mfmt(m.meta)+u+'</span></div>'
+      +'<div>projeção do ano<b class="'+s.c+'">'+mfmt(s.proj)+'</b><span>no ritmo atual</span></div></div>'
+    +'<div class="mt-track"><div class="mt-fill '+s.c+'" style="width:'+pS(s.feitos)+'%"></div>'
+      +'<div class="mt-tick" style="left:'+pS(m.comp)+'%"></div><div class="mt-tick meta" style="left:'+pS(m.meta)+'%"></div>'
+      +'<div class="mt-pace" style="left:'+pS(m.meta*s.frac)+'%"></div><div class="mt-cap" style="left:'+pS(s.feitos)+'%"></div></div>'
+    +'<div class="mt-legend"><div class="lg c"><small>Compromisso</small><b>'+mfmt(m.comp)+'</b></div><div class="lg m"><small>Meta</small><b>'+mfmt(m.meta)+'</b></div><div class="lg s"><small>Superação</small><b>'+mfmt(m.sup)+'</b></div></div>'
+    +'<div class="mt-note">'+banco+'. Este mês: <b>'+mfmt(ritmoMes)+u+'</b> mantém o ritmo. Pra cravar a Meta: <b>~'+(rest>0?mfmt(Math.ceil(porMes)):mfmt(faltaMeta))+u+(rest>0?'/mês':'')+'</b> nos '+rest+' meses restantes.</div>'
+    +'<div class="mt-grid">'+grid+'</div>'+levelup
+    +'<button class="mt-edit-btn" onclick="editarMeta(\''+m.id+'\')"><i class="ti ti-pencil"></i> Editar meta</button></div>';
+}
+function togMetaCat(c){metaCollapsed[c]=!metaCollapsed[c];renderMetas();}
+function toggleMeta(id){metaOpen=metaOpen===id?null:id;renderMetas();}
+function subirMeta(id){var m=metas.find(function(x){return x.id===id;});if(!m)return;m.meta=m.sup;m.sup=Math.round(m.sup*1.25);save();toast('Régua subiu — mira na Superação 🚀');renderMetas();}
+function fillMetaSelect(sel){var el=document.getElementById('mHab');el.innerHTML=habits.filter(function(h){return !isEvitar(h);}).map(function(h){return '<option value="'+h.id+'"'+(h.id===sel?' selected':'')+'>'+esc(h.nome)+'</option>';}).join('');}
+function novaMeta(){editMetaId=null;document.getElementById('metaTitle').innerHTML='<i class="ti ti-target-arrow"></i> Nova meta';fillMetaSelect('');document.getElementById('mHabRow').style.display='';document.getElementById('mComp').value='';document.getElementById('mMeta').value='';document.getElementById('mSup').value='';document.getElementById('mExcl').style.display='none';openOv('ovMeta');}
+function editarMeta(id){var m=metas.find(function(x){return x.id===id;});if(!m)return;editMetaId=id;document.getElementById('metaTitle').innerHTML='<i class="ti ti-edit"></i> Editar meta';fillMetaSelect(m.hid);document.getElementById('mHabRow').style.display='none';document.getElementById('mComp').value=m.comp;document.getElementById('mMeta').value=m.meta;document.getElementById('mSup').value=m.sup;document.getElementById('mExcl').style.display='';openOv('ovMeta');}
+function salvarMeta(){
+  var comp=parseFloat(document.getElementById('mComp').value),meta=parseFloat(document.getElementById('mMeta').value),sup=parseFloat(document.getElementById('mSup').value);
+  if(isNaN(meta)||meta<=0){toast('Defina a Meta (número maior que 0)');return;}
+  if(isNaN(comp)||comp<0)comp=0;if(isNaN(sup)||sup<meta)sup=meta;
+  if(editMetaId){var m=metas.find(function(x){return x.id===editMetaId;});if(m){m.comp=comp;m.meta=meta;m.sup=sup;}}
+  else{var hid=document.getElementById('mHab').value;if(!hid){toast('Escolha um hábito');return;}metas.push({id:'m'+(metaCounter++),hid:hid,comp:comp,meta:meta,sup:sup});}
+  save();closeOv('ovMeta');toast(editMetaId?'Meta atualizada ✓':'Meta criada ✓');renderMetas();
+}
+function excluirMeta(){if(!editMetaId)return;if(!confirm('Excluir esta meta anual? O hábito e os registros continuam intactos.'))return;metas=metas.filter(function(x){return x.id!==editMetaId;});save();closeOv('ovMeta');toast('Meta excluída');renderMetas();}
 function openOv(id){document.getElementById(id).classList.add('show');}
 function closeOv(id){document.getElementById(id).classList.remove('show');}
 function openMenu(){syncSwitches();openOv('ovMenu');}
@@ -1728,9 +1874,10 @@ function cloudPull(){
     if(map.habits)habits=map.habits;
     if(map.logs)logs=map.logs;
     if(map.counter!=null)counter=+map.counter;
+    if(map.metas)metas=map.metas;
     if(map.theme)applyTheme(map.theme);
-    try{localStorage.setItem(LS+'habits',JSON.stringify(habits));localStorage.setItem(LS+'logs',JSON.stringify(logs));localStorage.setItem(LS+'counter',String(counter));localStorage.removeItem(LS+'dirty');}catch(e){}
-    migrate();normalizeGrouped();recount();markSync();
+    try{localStorage.setItem(LS+'habits',JSON.stringify(habits));localStorage.setItem(LS+'logs',JSON.stringify(logs));localStorage.setItem(LS+'counter',String(counter));localStorage.setItem(LS+'metas',JSON.stringify(metas));localStorage.removeItem(LS+'dirty');}catch(e){}
+    migrate();normalizeGrouped();recount();recountMetas();markSync();
     cloudSet('Conectado: '+cloudUser.email,'ok');
     setTab(tab||'foco');
   });
@@ -1739,7 +1886,7 @@ function cloudPushAll(now){
   if(!sb||!cloudUser)return;clearTimeout(syncT);
   syncT=setTimeout(function(){
     var t=new Date().toISOString(),uid=cloudUser.id;
-    var rows=[{user_id:uid,key:'habits',value:habits,updated_at:t},{user_id:uid,key:'logs',value:logs,updated_at:t},{user_id:uid,key:'counter',value:counter,updated_at:t},{user_id:uid,key:'theme',value:curTheme(),updated_at:t}];
+    var rows=[{user_id:uid,key:'habits',value:habits,updated_at:t},{user_id:uid,key:'logs',value:logs,updated_at:t},{user_id:uid,key:'counter',value:counter,updated_at:t},{user_id:uid,key:'metas',value:metas,updated_at:t},{user_id:uid,key:'theme',value:curTheme(),updated_at:t}];
     _syncing=true;cloudSet('Salvando na nuvem…','');
     sb.from('foco_state').upsert(rows,{onConflict:'user_id,key'}).then(function(r){_syncing=false;if(!r.error){try{localStorage.removeItem(LS+'dirty');}catch(e){}markSync();}cloudSet(r.error?('Erro ao salvar: '+r.error.message):('Conectado: '+cloudUser.email+' · salvo'),r.error?'warn':'ok');});
   },now?100:1500);
