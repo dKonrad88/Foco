@@ -556,8 +556,8 @@ body.light .badge-warn{color:#8a5d00}
   <div class="overlay" id="ovMeta">
     <div class="modal">
       <h3 id="metaTitle"><i class="ti ti-target-arrow"></i> Nova meta</h3>
-      <div class="fg" id="mHabRow"><label>Puxa do hábito</label><select id="mHab"></select></div>
-      <div class="mt-hint">No total do <b>ano</b>: <b>Compromisso</b> = mínimo aceitável · <b>Meta</b> = o ideal · <b>Superação</b> = a esticada.</div>
+      <div class="fg" id="mHabRow"><label>Puxa do hábito</label><select id="mHab" onchange="preencheMetaDefaults(this.value)"></select></div>
+      <div class="mt-hint">Sugerimos os 3 a partir do seu alvo (Meta = programado no ano · Compromisso −25% · Superação +25%) — <b>ajuste à vontade</b>.</div>
       <div class="frow">
         <div class="fg"><label>Compromisso</label><input id="mComp" type="number" inputmode="decimal" placeholder="ex.: 9"></div>
         <div class="fg"><label>Meta</label><input id="mMeta" type="number" inputmode="decimal" placeholder="ex.: 12"></div>
@@ -1811,8 +1811,15 @@ function metaDetail(m,s){
 function togMetaCat(c){metaCollapsed[c]=!metaCollapsed[c];renderMetas();}
 function toggleMeta(id){metaOpen=metaOpen===id?null:id;renderMetas();}
 function subirMeta(id){var m=metas.find(function(x){return x.id===id;});if(!m)return;m.meta=m.sup;m.sup=Math.round(m.sup*1.25);save();toast('Régua subiu — mira na Superação 🚀');renderMetas();}
+function anualAlvo(h){var a=parseFloat(h.alvo)||0;if(a<=0)return 0;var mult={dia:365,semana:52,mes:12,trimestre:4,semestre:2,ano:1}[h.periodo]||12;return a*mult;}
+function preencheMetaDefaults(hid){
+  var h=H(hid),cE=document.getElementById('mComp'),mE=document.getElementById('mMeta'),sE=document.getElementById('mSup');
+  var meta=h?Math.ceil(anualAlvo(h)):0;
+  if(meta<=0){cE.value='';mE.value='';sE.value='';return;}
+  mE.value=meta; cE.value=Math.ceil(meta*0.75); sE.value=Math.ceil(meta*1.25);
+}
 function fillMetaSelect(sel){var el=document.getElementById('mHab');el.innerHTML=habits.filter(function(h){return !isEvitar(h);}).map(function(h){return '<option value="'+h.id+'"'+(h.id===sel?' selected':'')+'>'+esc(h.nome)+'</option>';}).join('');}
-function novaMeta(){editMetaId=null;document.getElementById('metaTitle').innerHTML='<i class="ti ti-target-arrow"></i> Nova meta';fillMetaSelect('');document.getElementById('mHabRow').style.display='';document.getElementById('mComp').value='';document.getElementById('mMeta').value='';document.getElementById('mSup').value='';document.getElementById('mExcl').style.display='none';openOv('ovMeta');}
+function novaMeta(){editMetaId=null;document.getElementById('metaTitle').innerHTML='<i class="ti ti-target-arrow"></i> Nova meta';fillMetaSelect('');document.getElementById('mHabRow').style.display='';document.getElementById('mExcl').style.display='none';preencheMetaDefaults(document.getElementById('mHab').value);openOv('ovMeta');}
 function editarMeta(id){var m=metas.find(function(x){return x.id===id;});if(!m)return;editMetaId=id;document.getElementById('metaTitle').innerHTML='<i class="ti ti-edit"></i> Editar meta';fillMetaSelect(m.hid);document.getElementById('mHabRow').style.display='none';document.getElementById('mComp').value=m.comp;document.getElementById('mMeta').value=m.meta;document.getElementById('mSup').value=m.sup;document.getElementById('mExcl').style.display='';openOv('ovMeta');}
 function salvarMeta(){
   var comp=parseFloat(document.getElementById('mComp').value),meta=parseFloat(document.getElementById('mMeta').value),sup=parseFloat(document.getElementById('mSup').value);
