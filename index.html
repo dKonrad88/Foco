@@ -1759,7 +1759,7 @@ function metaState(m){
 }
 function renderMetas(){
   var box=document.getElementById('screen');
-  if(!metas.length){box.innerHTML='<div class="empty"><i class="ti ti-target-arrow"></i>Nenhuma meta anual ainda.<br><span style="font-size:.8rem;font-weight:500;color:var(--muted)">Metas puxam de um hábito e são batidas mês a mês, no total do ano.</span><button class="madd" onclick="novaMeta()">Criar primeira meta</button></div>';return;}
+  if(!metas.length){box.innerHTML='<div class="empty"><i class="ti ti-target-arrow"></i>Nenhuma meta anual ainda.<br><span style="font-size:.8rem;font-weight:500;color:var(--muted)">Gere de uma vez a partir dos seus hábitos e depois é só ajustar.</span><button class="madd" onclick="criarTodasMetas()"><i class="ti ti-sparkles"></i> Gerar metas dos meus hábitos</button><br><button onclick="novaMeta()" style="margin-top:.55rem;background:none;border:none;color:var(--muted);font-family:inherit;font-size:.8rem;text-decoration:underline;cursor:pointer">ou criar uma manual</button></div>';return;}
   var ano=new Date().getFullYear(),states=[];
   metas.forEach(function(m){var s=metaState(m);if(s)states.push({m:m,s:s});});
   if(!states.length){box.innerHTML='<div class="empty"><i class="ti ti-target-arrow"></i>As metas estão ligadas a hábitos que não existem mais.<button class="madd" onclick="novaMeta()">Criar meta</button></div>';return;}
@@ -1779,7 +1779,11 @@ function renderMetas(){
       +'<span class="mt-cat-n">'+members.length+'</span><span class="mt-cat-chev'+(isCol?'':' open')+'"><i class="ti ti-chevron-right"></i></span></div>';
     return hdr+(isCol?'':members.map(function(x){return metaRow(x.m,x.s);}).join(''));
   }).join('');
-  box.innerHTML=head+'<div class="mt-list">'+list+'</div><button class="addbig" onclick="novaMeta()"><i class="ti ti-plus"></i> Nova meta</button>';
+  var temMeta={};metas.forEach(function(m){temMeta[m.hid]=1;});
+  var faltantes=habits.filter(function(h){return !isEvitar(h)&&anualAlvo(h)>0&&!temMeta[h.id];}).length;
+  var footer='<button class="addbig" onclick="novaMeta()"><i class="ti ti-plus"></i> Nova meta</button>';
+  if(faltantes)footer+='<button class="addbig" onclick="criarTodasMetas()" style="margin-top:.45rem"><i class="ti ti-sparkles"></i> Gerar metas dos '+faltantes+' hábitos restantes</button>';
+  box.innerHTML=head+'<div class="mt-list">'+list+'</div>'+footer;
 }
 function metaRow(m,s){
   var open=metaOpen===m.id,g=s.h,pS=function(v){return Math.min(100,v/m.sup*100);};
@@ -1819,6 +1823,17 @@ function preencheMetaDefaults(hid){
   mE.value=meta; cE.value=Math.ceil(meta*0.75); sE.value=Math.ceil(meta*1.25);
 }
 function fillMetaSelect(sel){var el=document.getElementById('mHab');el.innerHTML=habits.filter(function(h){return !isEvitar(h);}).map(function(h){return '<option value="'+h.id+'"'+(h.id===sel?' selected':'')+'>'+esc(h.nome)+'</option>';}).join('');}
+function criarTodasMetas(){
+  var existing={};metas.forEach(function(m){existing[m.hid]=1;});
+  var n=0;
+  habits.forEach(function(h){
+    if(isEvitar(h)||existing[h.id])return;
+    var meta=Math.ceil(anualAlvo(h));if(meta<=0)return;
+    metas.push({id:'m'+(metaCounter++),hid:h.id,comp:Math.ceil(meta*0.75),meta:meta,sup:Math.ceil(meta*1.25)});n++;
+  });
+  if(!n){toast('Nada pra gerar — todos os hábitos com alvo já têm meta.');return;}
+  save();toast(n+' meta'+(n===1?'':'s')+' criada'+(n===1?'':'s')+' ✓');renderMetas();
+}
 function novaMeta(){editMetaId=null;document.getElementById('metaTitle').innerHTML='<i class="ti ti-target-arrow"></i> Nova meta';fillMetaSelect('');document.getElementById('mHabRow').style.display='';document.getElementById('mExcl').style.display='none';preencheMetaDefaults(document.getElementById('mHab').value);openOv('ovMeta');}
 function editarMeta(id){var m=metas.find(function(x){return x.id===id;});if(!m)return;editMetaId=id;document.getElementById('metaTitle').innerHTML='<i class="ti ti-edit"></i> Editar meta';fillMetaSelect(m.hid);document.getElementById('mHabRow').style.display='none';document.getElementById('mComp').value=m.comp;document.getElementById('mMeta').value=m.meta;document.getElementById('mSup').value=m.sup;document.getElementById('mExcl').style.display='';openOv('ovMeta');}
 function salvarMeta(){
