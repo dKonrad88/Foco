@@ -5,7 +5,7 @@
    - Supabase (dados do usuário): NUNCA passa pelo cache. Sempre rede.
    - Demais GET (CDNs: fontes, ícones Tabler, supabase-js): stale-while-revalidate.
    Bump CACHE quando quiser forçar limpeza do cache antigo. */
-var CACHE = 'foco-v1';
+var CACHE = 'foco-v2';
 var SHELL = ['./', './index.html', './manifest.json',
              './apple-touch-icon.png', './icon-192.png', './icon-512.png'];
 
@@ -59,6 +59,36 @@ self.addEventListener('fetch', function (e) {
         return res;
       }).catch(function () { return cached; });
       return cached || net;
+    })
+  );
+});
+
+// ===== Web Push =====
+self.addEventListener('push', function (e) {
+  var d = {};
+  try { d = e.data ? e.data.json() : {}; } catch (err) { d = { title: 'Foco', body: (e.data && e.data.text()) || '' }; }
+  var title = d.title || 'Foco';
+  var opts = {
+    body: d.body || '',
+    icon: './icon-192.png',
+    badge: './icon-192.png',
+    tag: d.tag || 'foco',
+    renotify: true,
+    data: { url: d.url || './' }
+  };
+  e.waitUntil(self.registration.showNotification(title, opts));
+});
+
+self.addEventListener('notificationclick', function (e) {
+  e.notification.close();
+  var target = (e.notification.data && e.notification.data.url) || './';
+  e.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function (list) {
+      for (var i = 0; i < list.length; i++) {
+        var c = list[i];
+        if (c.url.indexOf('/Foco') >= 0 && 'focus' in c) return c.focus();
+      }
+      if (self.clients.openWindow) return self.clients.openWindow(target);
     })
   );
 });

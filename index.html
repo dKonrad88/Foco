@@ -591,6 +591,8 @@ body.light .badge-warn{color:#8a5d00}
       <h3><i class="ti ti-settings"></i> Ajustes</h3>
       <div class="menu-item" onclick="appReload()"><i class="ti ti-refresh"></i><div>Atualizar app<small>Baixa a versão mais nova (sem precisar do Safari)</small></div></div>
       <div class="menu-item" onclick="openCloud()"><i class="ti ti-cloud"></i><div>Conta & sincronização<small id="cloudMenuSub">Backup e sync entre aparelhos</small></div></div>
+      <div class="menu-item" onclick="pushEnable()"><i class="ti ti-bell"></i><div>Ativar notificações<small id="pushSub">Lembretes no iPhone · precisa do app instalado na tela inicial</small></div></div>
+      <div class="menu-item" onclick="pushTest()"><i class="ti ti-send"></i><div>Enviar notificação de teste<small>Dispara um push agora pra este aparelho</small></div></div>
       <div class="menu-item" onclick="openReviewCur()"><i class="ti ti-calendar-stats"></i><div>Retrospectiva do mês<small>Resumo e destaques do mês atual</small></div></div>
       <div class="menu-item" onclick="toggleSom()"><i class="ti ti-volume"></i><div>Som<small>Toque sonoro ao concluir e celebrar</small></div><span class="sw" id="somSw"></span></div>
       <div class="menu-item" onclick="toggleVib()"><i class="ti ti-device-mobile-vibration"></i><div>Vibração<small>Haptics ao concluir · Android sim, iOS provavelmente não</small></div><span class="sw" id="vibSw"></span></div>
@@ -2089,6 +2091,43 @@ if(!reviewBoot())setTimeout(celeEvitarBoot,900);
 </script>
 <script>
 /* PWA: registra o service worker (não afeta a lógica do app) */
+/* ===== Web Push (piloto) ===== */
+var VAPID_PUBLIC='BH9Zr-JA_68JJPCTuudMPhlFyt2UNM-Lhg6BRFKu_dNCHgejNQpfcvJltoe2SBenTBQhzteKKn5iqp9E-5FEifc';
+function urlB64ToU8(b64){var pad='='.repeat((4-b64.length%4)%4);var base=(b64+pad).replace(/-/g,'+').replace(/_/g,'/');var raw=atob(base);var arr=new Uint8Array(raw.length);for(var i=0;i<raw.length;i++)arr[i]=raw.charCodeAt(i);return arr;}
+function pushSet(msg){var e=document.getElementById('pushSub');if(e)e.textContent=msg;}
+function pushSupported(){return ('serviceWorker' in navigator)&&('PushManager' in window)&&('Notification' in window);}
+function pushStandalone(){try{return (window.matchMedia&&matchMedia('(display-mode:standalone)').matches)||window.navigator.standalone===true;}catch(e){return false;}}
+function pushEnable(){
+  if(!pushSupported()){pushSet('Este navegador não suporta notificações push.');toast('Sem suporte a push aqui');return;}
+  if(!pushStandalone()){pushSet('No iPhone: instale na tela inicial primeiro (Compartilhar → Adicionar à Tela de Início) e abra pelo ícone.');toast('Instale na tela inicial primeiro');return;}
+  if(!sb||!cloudUser){pushSet('Entre na sua conta em "Conta & sincronização" antes.');toast('Faça login primeiro');return;}
+  pushSet('Pedindo permissão…');
+  Notification.requestPermission().then(function(perm){
+    if(perm!=='granted'){pushSet('Permissão negada. Libere em Ajustes do iPhone → Foco → Notificações.');return;}
+    navigator.serviceWorker.ready.then(function(reg){
+      return reg.pushManager.getSubscription().then(function(ex){
+        return ex||reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:urlB64ToU8(VAPID_PUBLIC)});
+      });
+    }).then(function(sub){
+      var j=sub.toJSON()||{};var k=j.keys||{};
+      return sb.from('foco_push_subs').upsert({user_id:cloudUser.id,endpoint:j.endpoint,p256dh:k.p256dh,auth:k.auth,ua:navigator.userAgent},{onConflict:'user_id,endpoint'});
+    }).then(function(r){
+      if(r&&r.error){pushSet('Erro ao salvar no servidor: '+r.error.message);return;}
+      pushSet('Ativado ✓ — toque em "Enviar notificação de teste".');toast('Notificações ativadas ✓');sfx('feito');
+    }).catch(function(e){pushSet('Falhou: '+((e&&e.message)||e));});
+  }).catch(function(e){pushSet('Falhou na permissão: '+((e&&e.message)||e));});
+}
+function pushTest(){
+  if(!sb||!cloudUser){toast('Faça login primeiro');pushSet('Entre na sua conta antes.');return;}
+  pushSet('Enviando teste…');
+  sb.functions.invoke('foco-send-push',{body:{title:'💧 Hora da água',body:'Bora bater a meta de hoje 💪',url:'/Foco/',tag:'foco-test'}}).then(function(r){
+    if(r.error){pushSet('Erro no envio: '+r.error.message);toast('Erro no envio');return;}
+    var d=r.data||{};
+    if(d.error){pushSet(d.error==='no_subscriptions'?'Ative as notificações primeiro (nenhum aparelho registrado).':('Retorno: '+d.error));return;}
+    pushSet('Enviado a '+(d.sent||0)+'/'+(d.total||0)+' aparelho(s)'+(d.failed?(' · falhas: '+d.failed):'')+'. Olhe a notificação no iPhone.');
+    toast('Push enviado ✓');
+  }).catch(function(e){pushSet('Falhou: '+((e&&e.message)||e));});
+}
 if('serviceWorker' in navigator){window.addEventListener('load',function(){try{navigator.serviceWorker.register('./sw.js').catch(function(e){console.warn('SW reg falhou',e);});}catch(e){console.warn('SW indisponível',e);}});}
 </script>
 </body>
