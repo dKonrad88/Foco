@@ -378,6 +378,11 @@ body.light .badge-warn{color:#8a5d00}
 .dowpick button.on{background:var(--blue);border-color:var(--blue);color:#fff}
 .dowquick{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
 .dowquick button{background:var(--surface2);border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:.32rem .6rem;font-family:inherit;font-weight:700;font-size:.72rem;cursor:pointer}
+.remind-add{display:flex;gap:8px;align-items:stretch}
+.remind-add input[type=time]{flex:1;background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:11px;padding:.55rem .7rem;font-size:.95rem;font-family:inherit;font-variant-numeric:tabular-nums}
+.remind-chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px}
+.remind-chip{display:inline-flex;align-items:center;gap:5px;background:rgba(24,95,165,.16);color:#6ea8e0;border:1px solid rgba(24,95,165,.5);border-radius:99px;padding:.28rem .45rem .28rem .7rem;font-weight:800;font-size:.82rem;font-variant-numeric:tabular-nums}
+.remind-chip button{background:none;border:none;color:#6ea8e0;cursor:pointer;font-size:.85rem;line-height:1;padding:0;display:flex;align-items:center}
 /* ===== vista Semana ===== */
 .wk-nav{display:flex;align-items:center;justify-content:center;gap:14px;margin:0 0 12px}
 .wk-nav .arw{width:32px;height:32px;border-radius:9px;background:var(--surface2);border:1px solid var(--border);color:var(--muted);font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
@@ -549,6 +554,13 @@ body.light .badge-warn{color:#8a5d00}
         <div class="dowpick" id="habDias"></div>
         <div class="dowquick"><button type="button" onclick="setDiasQuick('week')">Dias úteis</button><button type="button" onclick="setDiasQuick('all')">Todo dia</button><button type="button" onclick="setDiasQuick('none')">Limpar</button></div>
         <div class="hint" style="text-align:left;margin-top:.45rem;opacity:.85">Marcados, o hábito entra na sua <b>Semana</b> e só aparece no <b>Hoje</b> nesses dias. Vazio = como hoje (aparece pelo ritmo).</div>
+      </div>
+
+      <div class="fg">
+        <label>🔔 Lembretes (horário) — opcional</label>
+        <div class="remind-add"><input type="time" id="habRemindInp"><button class="madd" type="button" onclick="addRemind()">＋ Add</button></div>
+        <div class="remind-chips" id="habRemind"></div>
+        <div class="hint" style="text-align:left;margin-top:.45rem;opacity:.85">Notificação no horário (respeita os <b>dias</b> acima). Precisa ter <b>ativado as notificações</b> em Ajustes.</div>
       </div>
 
       <div class="mfoot">
@@ -1711,6 +1723,10 @@ var DOWL=['D','S','T','Q','Q','S','S'];
 function renderDiasPick(){var el=document.getElementById('habDias');if(!el)return;el.innerHTML=DOWL.map(function(lb,i){return '<button type="button" class="'+(tmpDias.indexOf(i)>=0?'on':'')+'" onclick="toggleDia('+i+')">'+lb+'</button>';}).join('');}
 function toggleDia(n){var i=tmpDias.indexOf(n);if(i>=0)tmpDias.splice(i,1);else tmpDias.push(n);renderDiasPick();}
 function setDiasQuick(k){tmpDias=k==='all'?[0,1,2,3,4,5,6]:k==='week'?[1,2,3,4,5]:[];renderDiasPick();}
+var tmpRemind=[];
+function renderRemind(){var el=document.getElementById('habRemind');if(!el)return;el.innerHTML=tmpRemind.map(function(t,i){return '<span class="remind-chip">'+t+'<button type="button" onclick="rmRemind('+i+')" aria-label="remover"><i class="ti ti-x"></i></button></span>';}).join('');}
+function addRemind(){var inp=document.getElementById('habRemindInp'),v=(inp&&inp.value||'').trim();if(!/^\d{1,2}:\d{2}$/.test(v)){toast('Escolha um horário');return;}if(v.length===4)v='0'+v;if(tmpRemind.indexOf(v)<0){tmpRemind.push(v);tmpRemind.sort();}renderRemind();if(inp)inp.value='';}
+function rmRemind(i){tmpRemind.splice(i,1);renderRemind();}
 function refreshCatList(){document.getElementById('catList').innerHTML=cats().filter(function(c){return c!=='all';}).map(function(c){return '<option value="'+esc(c)+'">';}).join('');}
 function tipoChange(){var t=document.getElementById('habTipo').value;document.getElementById('boxNumero').classList.toggle('hide',t!=='numero');document.getElementById('boxItem').classList.toggle('hide',t!=='item');document.getElementById('boxBool').classList.toggle('hide',t!=='bool');tomChange();}
 function tomChange(){
@@ -1732,7 +1748,7 @@ function addItem(){var el=document.getElementById('itemInput');var v=(el.value||
 function rmItem(i){tmpItems.splice(i,1);renderItemChips();}
 
 function novoHabito(){
-  editId=null;tmpItems=[];tmpDias=[];corSel=CORES[0];
+  editId=null;tmpItems=[];tmpDias=[];tmpRemind=[];corSel=CORES[0];
   document.getElementById('habTitle').innerHTML='<i class="ti ti-plus"></i> Novo hábito';
   document.getElementById('habIcon').textContent='🔥';
   document.getElementById('habNome').value='';document.getElementById('habCat').value='';
@@ -1742,13 +1758,14 @@ function novoHabito(){
   document.getElementById('habTom').value='padrao';
   document.getElementById('habAlvo').value='';document.getElementById('habPeriodo').value='mes';
   document.getElementById('habDel').classList.add('hide');
-  renderCores();renderItemChips();renderDiasPick();tipoChange();refreshCatList();openOv('ovHabito');
+  renderCores();renderItemChips();renderDiasPick();renderRemind();tipoChange();refreshCatList();openOv('ovHabito');
 }
 function editarHabito(id){
   var h=habits.find(function(x){return x.id===id;});if(!h)return;
   editId=id;corSel=h.cor||CORES[0];
   tmpItems=(h.items||[]).map(function(it){return (typeof it==='string')?{nome:it,meta:0,base:0}:{nome:String((it&&it.nome)||''),meta:(parseFloat(it&&it.meta)||0),base:(parseFloat(it&&it.base)||0)};});
   tmpDias=(Array.isArray(h.dias)?h.dias:[]).slice();
+  tmpRemind=(Array.isArray(h.remind)?h.remind:[]).slice();
   var isItem=h.tipo==='item';
   document.getElementById('habTitle').innerHTML='<i class="ti ti-edit"></i> Editar hábito';
   document.getElementById('habIcon').textContent=h.icon||'🔥';
@@ -1762,7 +1779,7 @@ function editarHabito(id){
   document.getElementById('habTom').value=(h.tipo==='bool'&&h.tom==='evitar'?'evitar':'padrao');
   document.getElementById('habAlvo').value=h.alvo||'';document.getElementById('habPeriodo').value=h.periodo||'mes';
   document.getElementById('habDel').classList.remove('hide');
-  renderCores();renderItemChips();renderDiasPick();tipoChange();refreshCatList();openOv('ovHabito');
+  renderCores();renderItemChips();renderDiasPick();renderRemind();tipoChange();refreshCatList();openOv('ovHabito');
 }
 function salvarHabito(){
   var nome=document.getElementById('habNome').value.trim();
@@ -1783,7 +1800,8 @@ function salvarHabito(){
     rotulo:isItem?document.getElementById('habRotulo').value.trim():'',
     items:items,tom:tom,
     alvo:!isNaN(alvo)&&alvo>0?alvo:0,periodo:document.getElementById('habPeriodo').value,
-    dias:tmpDias.slice().sort(function(a,b){return a-b;})
+    dias:tmpDias.slice().sort(function(a,b){return a-b;}),
+    remind:tmpRemind.slice().sort()
   };
   if(tom==='evitar')h.desde=(prev&&prev.desde)?prev.desde:today();
   if(editId){var i=habits.findIndex(function(x){return x.id===editId;});habits[i]=h;}
