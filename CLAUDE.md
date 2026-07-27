@@ -2,29 +2,33 @@
 
 > As sessões do Claude Code do **Mac (casa)** e do **PC da Empresa** NÃO compartilham histórico de chat.
 > A única coisa compartilhada é **este repositório git**. Por isso este arquivo é a memória comum.
-> **No início de cada sessão:** dê `git pull` e leia este arquivo. **No fim:** atualize o "Log de handoff" e dê `git add -A && git commit && git push`.
+> **No início de cada sessão:** dê `git pull`, leia o **`HANDOFF.md`** (onde paramos + próximos passos) e depois este arquivo (arquitetura). **No fim:** atualize o **`HANDOFF.md`** e dê `git add -A && git commit && git push`.
+> Nome do projeto para o usuário: **"HTML - Foco"**.
 
 ## Projeto
-- App pessoal **single-file**: `index.html` (HTML/CSS/JS, ~1779 linhas, estilo PWA de celular, offline-first).
+- App pessoal **single-file**: `index.html` (HTML/CSS/JS, ~1945 linhas, PWA offline-first).
 - Publicado no **GitHub Pages**: https://dkonrad88.github.io/Foco/
-- Repo: `github.com/dKonrad88/Foco` — branch **`main`**.
-- É um **rastreador de hábitos**. 3 abas: **Foco** (`setTab('foco')` — tela do dia, registro rápido), **Hábitos** (`habitos` — cadastro/edição) e **Insights** (`insights` — dashboards/heatmap).
+- Repo: `github.com/dKonrad88/Foco` — branch **`main`**. Arquivos: `index.html`, `manifest.json`, `sw.js`, `apple-touch-icon.png`, `icon-192.png`, `icon-512.png`, `icon.svg`, `CLAUDE.md`, `HANDOFF.md`.
+- É um **rastreador de hábitos**. **4 abas** (`setTab(...)`): **Foco** (`foco` — tela do dia; hoje é a **vista Lista**, o "modo card"/stepper foi removido), **Hábitos** (`habitos` — cadastro/edição), **Insights** (`insights` — dashboards) e **Metas** (`metas` — **metas anuais**, ver HANDOFF.md).
+- **PWA instalável** (`manifest.json`/`sw.js`/ícones): celular ou app instalado = **tela cheia**; desktop = **mockup de celular** (media query `max-width:480px`/`display-mode:standalone`). Botão "Atualizar app" em Ajustes.
+- **Identidade da suíte:** fonte **Inter**, acento **azul `#185FA5` + teal `#1a7a8a`** (`--green` = teal), tema **dark⇄light** (dark padrão; Copa/bandeira BR removidos), cards radius 14px.
 
 ## Onde vivem os dados (NÃO PERDER)
 - **Código/layout** → `index.html` (versionado no git). Mudanças vão pelo git.
 - **Dados do usuário** (hábitos, logs) → **Supabase** + **localStorage** (offline-first). **NÃO** ficam no git.
-- localStorage: prefixo **`focoapp_`** (ex.: `focoapp_habits`, `focoapp_logs`, `focoapp_counter`, `focoapp_dirty`, `focoapp_lastSync`). A flag `dirty='1'` marca mudanças locais não sincronizadas.
+- localStorage: prefixo **`focoapp_`** (ex.: `focoapp_habits`, `focoapp_logs`, `focoapp_counter`, `focoapp_metas`, `focoapp_theme`, `focoapp_dirty`, `focoapp_lastSync`). A flag `dirty='1'` marca mudanças locais não sincronizadas.
 - ⚠️ **Regra de ouro:** offline-first com last-write-wins por chave. No login, se há `dirty` local, o app **pergunta** (enviar local vs baixar nuvem). Cuidado pra não subir estado vazio por cima de dados bons.
 
 ## Supabase (compartilhado com o HUB Pessoal)
 - **Mesmo projeto** do HUB: `jlouesrrmqeauzlgvrpw` · URL `https://jlouesrrmqeauzlgvrpw.supabase.co`.
 - Chave anon (publishable, pode ficar no HTML público): `sb_publishable_ulG1woVG1p1Seax63GGYPQ_PG6-8l-G`.
-- Tabela própria: **`foco_state`** — linhas `(user_id, key, value, updated_at)`, `upsert` com `onConflict:'user_id,key'`. Chaves: `habits`, `logs`, `counter`, `theme`.
+- Tabela própria: **`foco_state`** — linhas `(user_id, key, value, updated_at)`, `upsert` com `onConflict:'user_id,key'`. Chaves: `habits`, `logs`, `counter`, `metas`, `theme`. (**`metas`** é a chave das metas anuais — aditiva; RLS `own_rows` cobre qualquer chave.)
 - O HUB grava em `hub_state` (tabela diferente) — **não se atropelam**. Auth (e-mail/senha) é a mesma conta nos dois.
 
 ## Modelo de dados (schema dos hábitos — diferente do HUB de propósito)
 - **Hábito** (`habits[]`): `id, nome, icon, cor, cat, tipo, periodo, alvo, unidade, rotulo, tom, tomCustom, atalhos, items, substr, desde`.
-- **Log** (`logs[]`): `t` (data/timestamp), `feito`, `valor`, `hora`, `items`, `recaida`, `s`.
+- **Log** (`logs[]`): `t` (data/timestamp), `feito`, `valor`, `hora`, `items`, `recaida`, `s`. *(tom "personalizado"/`tomCustom` foi removido — só `padrao`/`evitar`.)*
+- **Meta anual** (`metas[]`): `id, hid` (id do hábito de origem), `comp`, `meta`, `sup` (**Compromisso/Meta/Superação**, totais do ano). Agregada por ano com janela **a partir do início real** (`anoStartMonth()` = 1º mês com ≥7 dias de registro; prorateia a meta). Funções: `renderMetas`, `metaState`, `anoAgg`, `criarTodasMetas`, `anualAlvo`, `subirMeta`. **Não** afeta o HUB (o dashboard do HUB não lê a chave `metas`). Detalhes no HANDOFF.md.
 - `counter` = contador incremental de IDs. `theme` = tema atual.
 - Funções-base: `migrate()` (sobe versões antigas), `normalizeGrouped()` (normaliza), `recount()` (recalcula), `save()`/`load()`, `applyTheme()`/`curTheme()`, `enter()` (entra no dia).
 
@@ -40,4 +44,5 @@
 - Edição pelo app Claude Code (aba Code), nunca pelo Codespace. ⚠️ No Windows, salvar `index.html` sempre em **UTF-8** (evita mojibake).
 
 ## Log de handoff (a sessão mais recente escreve no topo)
+- **2026-07-06 — Mac — Sessão grande + criado `HANDOFF.md`:** o app virou **só-Lista** (modo card removido), ganhou **PWA instalável**, **identidade da suíte** (Inter, azul `#185FA5`/teal `#1a7a8a`, dark padrão, Copa/bandeira removidos), "Atualizar app" em Ajustes, e a feature nova **Metas anuais** (aba Metas, chave `metas` no `foco_state`, níveis Compromisso/Meta/Superação, janela a partir do início real do registro). Também: removido tom Personalizado; Insights limitado a 5; skill de usuário `phone-frame`. **O estado atual e os próximos passos passaram a viver no `HANDOFF.md` — leia lá primeiro.** Último commit: `0ef2366`.
 - **2026-06-21 — Mac (casa) — Criado este CLAUDE.md:** primeira memória compartilhada do Foco. Contexto: o **HUB Pessoal passou a embutir o Foco** (iframe na aba Habit Tracker) — ver seção "Relação com o HUB". Mapeados aqui: estrutura (3 abas foco/habitos/insights), dados (`foco_state` no Supabase `jlouesrrmqeauzlgvrpw`, localStorage prefixo `focoapp_`), schema de hábito/log, e o acoplamento com o HUB. Nada de código mudou nesta sessão do lado do Foco — só documentação.
