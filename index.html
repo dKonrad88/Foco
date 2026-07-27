@@ -407,6 +407,7 @@ body.light .badge-warn{color:#8a5d00}
 .wk-row .nm{flex:1;font-size:.9rem;font-weight:600} .wk-row .nm small{display:block;font-size:.66rem;color:var(--muted);font-weight:500}
 .wk-chk{width:23px;height:23px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:.75rem;font-weight:900}
 .wk-chk.done{border-color:var(--green);background:var(--green)}
+.wk-chk.tap{cursor:pointer;position:relative} .wk-chk.tap::after{content:'';position:absolute;inset:-12px} .wk-chk.tap:active{transform:scale(.88)}
 .wk-row.done .nm{color:var(--muted);text-decoration:line-through;text-decoration-color:rgba(156,149,139,.5)}
 .wk-row.miss .wk-chk{border-color:var(--danger);border-style:dashed}
 .wk-empty-day{padding:.6rem .8rem;font-size:.78rem;color:var(--muted);font-weight:500}
@@ -1107,6 +1108,21 @@ function setFocoView(v){focoView=v;if(v==='hoje')curDate=today();else focoWeekOf
 function shiftWeek(n){focoWeekOff+=n;render();}
 function thisWeek(){focoWeekOff=0;render();}
 function goDia(ds){focoView='hoje';catFilter='__hoje__';curDate=(ds>today()?today():ds);enter();}
+function wkToggle(id,ds,ev){
+  if(ev&&ev.stopPropagation)ev.stopPropagation();
+  if(ds>today())return;
+  var h=H(id);if(!h)return;
+  if(h.tipo!=='bool'){goDia(ds);return;}
+  logs[ds]=logs[ds]||{};
+  var l=logs[ds][id]||(logs[ds][id]={valor:0,feito:false,items:[]});
+  l.feito=!l.feito;
+  if(l.feito&&ds===today()){var n=new Date();l.hora=n.getHours()*60+n.getMinutes();}
+  save();
+  if(l.feito)sfx('feito');
+  var sc=document.getElementById('screen'),y=sc?sc.scrollTop:0;
+  renderWeekView();
+  var sc2=document.getElementById('screen');if(sc2)sc2.scrollTop=y;
+}
 function weekDates(off){
   var d=new Date(today()+'T12:00:00'),wd=d.getDay(),back=(wd===0?6:wd-1);
   d.setDate(d.getDate()-back+off*7);
@@ -1151,7 +1167,7 @@ function renderWeekView(){
     var clk=(ds<=tdy&&mem.length);
     html+='<div class="wk-card'+(clk?' clk':'')+'"'+(clk?' onclick="goDia(\''+ds+'\')"':'')+'>';
     if(!mem.length)html+='<div class="wk-empty-day">Livre</div>';
-    else mem.forEach(function(h){var dd=(ds<=tdy&&doneOn(h,ds)),ms=(isP&&!dd);html+='<div class="wk-row'+(dd?' done':'')+(ms?' miss':'')+'"><span class="em" style="background:'+rgba(h.cor,.16)+'">'+(h.icon||'•')+'</span><span class="nm">'+esc(h.nome)+'<small>'+esc(catKey(h)||'Sem categoria')+'</small></span><span class="wk-chk'+(dd?' done':'')+'">'+(dd?'✓':'')+'</span></div>';});
+    else mem.forEach(function(h){var dd=(ds<=tdy&&doneOn(h,ds)),ms=(isP&&!dd),tapOk=(ds<=tdy&&h.tipo==='bool');html+='<div class="wk-row'+(dd?' done':'')+(ms?' miss':'')+'"><span class="em" style="background:'+rgba(h.cor,.16)+'">'+(h.icon||'•')+'</span><span class="nm">'+esc(h.nome)+'<small>'+esc(catKey(h)||'Sem categoria')+'</small></span><span class="wk-chk'+(dd?' done':'')+(tapOk?' tap':'')+'"'+(tapOk?' onclick="wkToggle(\''+h.id+'\',\''+ds+'\',event)"':'')+'>'+(dd?'✓':'')+'</span></div>';});
     html+='</div></div>';
   });
   if(cl.sem.length){
