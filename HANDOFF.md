@@ -5,11 +5,23 @@
 > Fluxo: `git pull` no início · editar → `git add -A && commit && push origin main` (Pages publica sozinho).
 
 App no ar: **https://dkonrad88.github.io/Foco/** · Repo: `github.com/dKonrad88/Foco` (`main`).
-Última sessão: **2026-07-27 (Mac)** · `index.html` single-file.
+Última sessão: **2026-08-13 (Mac)** · `index.html` single-file.
 
 ---
 
-## 🎯 FOCO DA VEZ — Vista Semana + agendamento por dia (recém-construído)
+## 🎯 FOCO DA VEZ — Modo "Você" (identidades) · a virada de engajamento
+
+**Problema real (fala do usuário, o mais importante da sessão):** ele **não estava usando** o app. "Não tenho um motivo claro pra abrir." Marcar 29 caixas virou contabilidade sem alma. Ele quer **simples e prático**, e escolheu (entre as opções) *"ver quem tô me tornando"* + *"me ajuda a achar o porquê"*. Ao olhar os hábitos dele, emergem **4 identidades** — e ele confirmou as 4: 🏃 **atleta**, ✝️ **homem de fé**, 💑 **parceiro da Débora**, 📚 **quem evolui**.
+
+**A virada:** o app deixa de abrir numa lista de tarefas e abre num **espelho de quem ele tá virando**. Novo modo **"Você"** (é o **padrão ao abrir** a aba Foco; toggle virou **Você · Hoje · Semana**). Mostra 1 card por identidade, cada um com: **streak da área** (🔥 dias seguidos ativo), uma **frase de status/empurrão** ("Forte — 4 dias seguidos" / "Faz 9 dias sem cuidar disso. Bora?" / "Ainda sem registro") e os **hábitos de hoje daquela área, marcáveis ali** (bool marca direto via `listAdd`; número/item abre o painel no Hoje pra registrar valor). Marcar deixa de ser tarefa e vira "cuidar de quem eu tô virando".
+
+**Onde no código:** `IDENTS` (mapeia **categorias → identidade**: Saúde&Energia/Alimentação/Autocuidado/Mente→atleta; Fé→fé; Relacionamento→parceiro; Aprendizado/Trabalho→evolui — ⚠️ por *string exata* da categoria; se ele renomear categoria, ajustar aqui), `identHabs`, `identStreak`, `identInfo`, `renderVoce`, `voceMark`, `saudacao`. `focoView` agora tem `'voce'` (default) além de `hoje`/`semana`. Testado no navegador (4 cards com estados reais, marcar bool + abrir item, 0 erro).
+
+**Em aberto / próximos (do modo Você):** o usuário vai usar e dizer se **agora dá vontade de abrir**. Ideias naturais: números por identidade mais ricos (km do mês, etc.); esconder de vez os hábitos que não caem nas 4 (ele quer menos); deixar o mapa categoria→identidade **configurável**; conectar com o push (o lembrete diário pode ser "venha ver suas 4 versões"). **Marcar da notificação** (bool) segue como próximo do push.
+
+---
+
+## Já entregue — Vista Semana + agendamento por dia
 
 **Problema que resolveu (fala do usuário):** hábitos de frequência (ex.: *Estudar inglês*, *Escutar podcast*) não tinham *quando* — só ficavam na lista. Sem dia marcado, ele empurrava com a barriga até a última semana e não fazia. E ele queria **ver a semana toda de antemão**, não descobrir no dia.
 

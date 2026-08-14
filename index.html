@@ -422,6 +422,34 @@ body.light .badge-warn{color:#8a5d00}
 .wk-nd-row .em{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
 .wk-nd-row .nm{flex:1;font-size:.86rem;font-weight:600} .wk-nd-row .nm small{display:block;font-size:.66rem;color:var(--muted);font-weight:500}
 .wk-nd-row button{background:rgba(24,95,165,.16);color:var(--blue);border:1px solid var(--blue);border-radius:9px;padding:.4rem .7rem;font-family:inherit;font-weight:800;font-size:.74rem;cursor:pointer;white-space:nowrap;flex-shrink:0}
+/* ===== modo "Você" (identidades) ===== */
+.voce-hi{padding:2px 4px 0}
+.voce-hi h2{font-size:1.2rem;font-weight:800;letter-spacing:-.01em}
+.voce-hi p{font-size:.8rem;color:var(--muted);font-weight:600;margin-top:2px}
+.idc{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:.85rem .95rem;margin-top:12px}
+.idc.attn{border-color:rgba(224,145,58,.5)}
+.idc-top{display:flex;align-items:center;gap:11px}
+.idc-em{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0}
+.idc-nm{flex:1;min-width:0}
+.idc-nm b{display:block;font-size:1rem;font-weight:800}
+.idc-nm small{font-size:.73rem;color:var(--muted);font-weight:600}
+.idc-badge{font-size:.7rem;font-weight:800;padding:.22rem .5rem;border-radius:99px;white-space:nowrap}
+.idc-badge.fire{background:rgba(26,122,138,.18);color:#5cc4d4}
+.idc-badge.ok{background:rgba(24,95,165,.16);color:#6ea8e0}
+.idc-badge.attn{background:rgba(224,145,58,.16);color:#e0913a}
+.idc-line{font-size:.85rem;font-weight:600;margin:.65rem 0 0;line-height:1.42}
+.idc-line.soft{color:var(--muted)}
+.idc-line b{color:var(--text)}
+.idc-hab{margin-top:.65rem;border-top:1px solid var(--border);padding-top:.6rem;display:flex;flex-direction:column;gap:.5rem}
+.idc-row{display:flex;align-items:center;gap:10px}
+.idc-row .he{width:27px;height:27px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.98rem;flex-shrink:0}
+.idc-row .hn{flex:1;font-size:.86rem;font-weight:600;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.idc-row .hn small{color:var(--muted);font-weight:500}
+.idc-row.done .hn{color:var(--muted);text-decoration:line-through;text-decoration-color:rgba(156,149,139,.5)}
+.idc-hb{width:31px;height:31px;border-radius:50%;border:2px solid var(--border);background:transparent;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--muted);cursor:pointer;font-size:.95rem;font-family:inherit;transition:.12s}
+.idc-hb.done{border-color:var(--green);background:var(--green);color:#fff}
+.idc-hb:active{transform:scale(.9)}
+.idc-done{margin-top:.6rem;display:flex;align-items:center;gap:.4rem;font-size:.8rem;color:var(--green);font-weight:700}
 </style>
 </head>
 <body class="dark">
@@ -1109,16 +1137,17 @@ function attachListSwipe(){
 }
 
 /* ===== VISTA SEMANA (planejador · aba Foco) ===== */
-var focoView='hoje',focoWeekOff=0;
+var focoView='voce',focoWeekOff=0;
 var MES3=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
 var DOW3=['DOM','SEG','TER','QUA','QUI','SEX','SÁB'];
 function focoViewToggle(){
   return '<div class="fvseg">'
+    +'<button class="'+(focoView==='voce'?'on':'')+'" onclick="setFocoView(\'voce\')"><i class="ti ti-user-heart"></i> Você</button>'
     +'<button class="'+(focoView==='hoje'?'on':'')+'" onclick="setFocoView(\'hoje\')"><i class="ti ti-checklist"></i> Hoje</button>'
     +'<button class="'+(focoView==='semana'?'on':'')+'" onclick="setFocoView(\'semana\')"><i class="ti ti-calendar-week"></i> Semana</button>'
     +'</div>';
 }
-function setFocoView(v){focoView=v;if(v==='hoje')curDate=today();else focoWeekOff=0;render();}
+function setFocoView(v){focoView=v;if(v==='hoje'||v==='voce')curDate=today();if(v==='semana')focoWeekOff=0;render();}
 function shiftWeek(n){focoWeekOff+=n;render();}
 function thisWeek(){focoWeekOff=0;render();}
 function goDia(ds){focoView='hoje';catFilter='__hoje__';curDate=(ds>today()?today():ds);enter();}
@@ -1191,9 +1220,83 @@ function renderWeekView(){
   }
   box.innerHTML=html;
 }
+/* ===== modo VOCÊ (identidades) ===== */
+var IDENTS=[
+  {key:'atleta',nome:'O atleta',sub:'Corpo forte e saudável',icon:'🏃',cor:'#1a7a8a',cats:['Saúde & Energia','Alimentação','Autocuidado','Mente & Foco']},
+  {key:'fe',nome:'O homem de fé',sub:'Vida espiritual',icon:'✝️',cor:'#b8884a',cats:['Fé & Espiritualidade']},
+  {key:'parceiro',nome:'O parceiro presente',sub:'Perto da Débora',icon:'💑',cor:'#c47a92',cats:['Relacionamento']},
+  {key:'evolui',nome:'O que evolui sempre',sub:'Mente e carreira',icon:'📚',cor:'#9b7bc4',cats:['Aprendizado & Crescimento','Trabalho & Carreira']}
+];
+function identHabs(cats){return habits.filter(function(h){return !isEvitar(h)&&cats.indexOf(catKey(h))>=0;});}
+function identStreak(hs){
+  if(!hs.length)return 0;
+  var d=new Date(today()+'T12:00:00'),n=0;
+  for(var i=0;i<400;i++){
+    var ds=iso(d),any=hs.some(function(h){return doneOn(h,ds);});
+    if(any)n++;else if(i>0)break;
+    d.setDate(d.getDate()-1);
+  }
+  return n;
+}
+function identInfo(cats){
+  var hs=identHabs(cats),tdy=today();
+  var feitosHoje=hs.filter(function(h){return doneOn(h,tdy);}).length;
+  var streak=identStreak(hs),last=null;
+  hs.forEach(function(h){var a=lastDoneAgo(h);if(a!=null&&(last==null||a<last))last=a;});
+  var hoje=hs.filter(expectedToday),attn=false,frase='';
+  if(feitosHoje>0)frase=streak>=3?('Forte — <b>'+streak+' dias</b> seguidos ativo.'):'Ativo hoje. Bom demais.';
+  else if(last==null){frase='Ainda sem registro. Que tal começar hoje?';attn=true;}
+  else if(last>=5){frase='Faz <b>'+last+' dias</b> sem cuidar disso. Bora?';attn=true;}
+  else if(streak>=3)frase='<b>'+streak+' dias</b> seguidos — não perde o embalo hoje.';
+  else frase='No jeito. Mantém o ritmo.';
+  return {hs:hs,feitosHoje:feitosHoje,streak:streak,last:last,hoje:hoje,attn:attn,frase:frase};
+}
+function saudacao(){var h=new Date().getHours();return h<12?'Bom dia':h<18?'Boa tarde':'Boa noite';}
+function renderVoce(){
+  var box=document.getElementById('screen');
+  if(!habits.length){box.innerHTML=focoViewToggle()+'<div class="empty"><i class="ti ti-user-heart"></i>Sem hábitos ainda.<button class="madd" onclick="novoHabito()">Criar primeiro hábito</button></div>';return;}
+  var html=focoViewToggle()+'<div class="voce-hi"><h2>'+saudacao()+' 👋</h2><p>Quem você tá construindo:</p></div>';
+  var any=false;
+  IDENTS.forEach(function(id){
+    var info=identInfo(id.cats);
+    if(!info.hs.length)return;
+    any=true;
+    var badge;
+    if(info.feitosHoje>0||info.streak>=3)badge='<span class="idc-badge fire">🔥 '+info.streak+' dia'+(info.streak===1?'':'s')+'</span>';
+    else if(info.attn)badge='<span class="idc-badge attn">precisa de você</span>';
+    else badge='<span class="idc-badge ok">no ritmo</span>';
+    var soft=(!info.attn&&info.feitosHoje===0&&info.streak<3)?' soft':'';
+    html+='<div class="idc'+(info.attn?' attn':'')+'">'
+      +'<div class="idc-top"><span class="idc-em" style="background:'+rgba(id.cor,.18)+'">'+id.icon+'</span>'
+      +'<span class="idc-nm"><b>'+esc(id.nome)+'</b><small>'+esc(id.sub)+'</small></span>'+badge+'</div>'
+      +'<div class="idc-line'+soft+'">'+info.frase+'</div>';
+    if(info.hoje.length){
+      html+='<div class="idc-hab">';
+      info.hoje.slice(0,4).forEach(function(h){
+        var done=doneOn(h,today()),isBool=(h.tipo==='bool');
+        html+='<div class="idc-row'+(done?' done':'')+'"><span class="he" style="background:'+rgba(h.cor,.16)+'">'+(h.icon||'•')+'</span>'
+          +'<span class="hn">'+esc(h.nome)+'</span>'
+          +'<button class="idc-hb'+(done?' done':'')+'" onclick="voceMark(\''+h.id+'\')">'+(done?'✓':(isBool?'+':'›'))+'</button></div>';
+      });
+      html+='</div>';
+    } else if(info.feitosHoje>0){
+      html+='<div class="idc-done"><i class="ti ti-check"></i> Tudo dessa área, feito hoje.</div>';
+    }
+    html+='</div>';
+  });
+  if(!any)html+='<div class="empty"><i class="ti ti-user-heart"></i>Seus hábitos ainda não caem nas 4 versões.</div>';
+  box.innerHTML=html;
+}
+function voceMark(id){
+  var h=H(id);if(!h)return;
+  curDate=today();
+  if(h.tipo==='bool'){listAdd(id);return;}
+  focoView='hoje';catFilter='__hoje__';_listOpen=id;render();
+}
 function render(){
   if(tab!=='foco')return;
-  if(focoView==='semana')renderWeekView();
+  if(focoView==='voce')renderVoce();
+  else if(focoView==='semana')renderWeekView();
   else renderLista();
 }
 
