@@ -1,51 +1,48 @@
-# Foco · Hábitos — memória compartilhada entre máquinas (Claude Code)
+# Foco · Equilíbrio — memória compartilhada entre máquinas (Claude Code)
 
 > As sessões do Claude Code do **Mac (casa)** e do **PC da Empresa** NÃO compartilham histórico de chat.
 > A única coisa compartilhada é **este repositório git**. Por isso este arquivo é a memória comum.
 > **No início de cada sessão:** dê `git pull`, leia o **`HANDOFF.md`** (onde paramos + próximos passos) e depois este arquivo (arquitetura). **No fim:** atualize o **`HANDOFF.md`** e dê `git add -A && git commit && git push`.
 > Nome do projeto para o usuário: **"HTML - Foco"**.
 
-## Projeto
-- App pessoal **single-file**: `index.html` (HTML/CSS/JS, ~1945 linhas, PWA offline-first).
-- Publicado no **GitHub Pages**: https://dkonrad88.github.io/Foco/
-- Repo: `github.com/dKonrad88/Foco` — branch **`main`**. Arquivos: `index.html`, `manifest.json`, `sw.js`, `apple-touch-icon.png`, `icon-192.png`, `icon-512.png`, `icon.svg`, `CLAUDE.md`, `HANDOFF.md`.
-- É um **rastreador de hábitos**. **4 abas** (`setTab(...)`): **Foco** (`foco` — tela do dia), **Hábitos** (`habitos` — cadastro/edição), **Insights** (`insights` — dashboards) e **Metas** (`metas` — **metas anuais**, ver HANDOFF.md).
-- A aba **Foco** tem um toggle **Hoje ⇄ Semana** (`focoView`): **Hoje** = a **vista Lista** (o "modo card"/stepper foi removido); **Semana** = **planejador semanal** (`renderWeekView`) que usa o agendamento `h.dias`. Ver HANDOFF.md. ⚠️ Existe outra `renderSemana` (heatmap da aba Hábitos, `habView`) — coisa diferente, não confundir.
-- **PWA instalável** (`manifest.json`/`sw.js`/ícones): celular ou app instalado = **tela cheia**; desktop = **mockup de celular** (media query `max-width:480px`/`display-mode:standalone`). Botão "Atualizar app" em Ajustes.
-- **Identidade da suíte:** fonte **Inter**, acento **azul `#185FA5` + teal `#1a7a8a`** (`--green` = teal), tema **dark⇄light** (dark padrão; Copa/bandeira BR removidos), cards radius 14px.
+## Projeto (v2 "Equilíbrio", desde 2026-09-19)
+- PWA pessoal: **`index.html`** (UI + sync, ES5, ~1290 linhas) + **`equilibrio.js`** (domínio puro, `window.EQ`, ~840 linhas) + `sw.js` + `manifest.json` + ícones.
+- Publicado no **GitHub Pages**: https://dkonrad88.github.io/Foco/ · Repo `github.com/dKonrad88/Foco`, branch **`main`**.
+- **Ideia:** estruturar a vida em **7 pilares** (Treino, Sono, Alimentação, Conhecimento, Carreira, Descanso e lazer, Débora) com **poucos hábitos de 1 toque**, um **ritual à noite (≤5 min)** e uma **Pontuação de Equilíbrio** estilo "Fitness do Strava" (memória de ~6 semanas), **semáforo semanal** por pilar e **roda da vida** (radar). Tom **neutro, só dados** (sem emoji, sem frases motivacionais, sem celebração).
+- **3 abas** (barra inferior): **Hoje** (lista por pilar, 1 toque; cartões "Ontem ficou aberto", "Revisão do mês", faixa de viagem; botão "Fechar o dia"), **Equilíbrio** (pontuação + curva 8 semanas + "Esta semana" semáforo + **roda da vida no final**), **Pilares** (pilares, "Em espera", "Virou rotina", modo viagem, ajustes: conta, lembrete da noite, tema, atualizar app, exportar).
+- **Ciclo de vida do hábito:** `ativo` → `rotina` (virou automático: sai da tela, revisão mensal) · `espera` (quero, mas não agora: fica discreto; o app sugere **um por vez** quando o pilar está estável há 4 semanas).
+- **Modo viagem = plano mínimo:** Treino fica verde com 1 treino qualquer na semana; "Comi bem" 😐 vale como bem; os outros pilares pausam (neutros).
+- Perfil do usuário que originou o desenho (respostas do questionário): arquivo **privado fora do git** no PC da Empresa (`G:\g_Diego\HTML\Foco-perfil\perfil-foco.md`). **Não versionar** (o repo é público).
+- **PWA:** celular/instalado = tela cheia; desktop = mockup de celular. Identidade da suíte: Inter, azul `#185FA5`, tema escuro padrão.
 
 ## Onde vivem os dados (NÃO PERDER)
-- **Código/layout** → `index.html` (versionado no git). Mudanças vão pelo git.
-- **Dados do usuário** (hábitos, logs) → **Supabase** + **localStorage** (offline-first). **NÃO** ficam no git.
-- localStorage: prefixo **`focoapp_`** (ex.: `focoapp_habits`, `focoapp_logs`, `focoapp_counter`, `focoapp_metas`, `focoapp_theme`, `focoapp_dirty`, `focoapp_lastSync`). A flag `dirty='1'` marca mudanças locais não sincronizadas.
-- ⚠️ **Regra de ouro:** offline-first com last-write-wins por chave. No login, se há `dirty` local, o app **pergunta** (enviar local vs baixar nuvem). Cuidado pra não subir estado vazio por cima de dados bons.
+- **Código** → git. **Dados** → Supabase (`foco_state`, chaves **`v2_*`**) + localStorage prefixo **`foco2_`** (offline-first).
+- **Contrato completo: [`CONTRATO.md`](CONTRATO.md)** (tabela, chaves, JSON, regra da pontuação, como o HUB lê).
+- Chaves v1 (`habits`, `logs`, `counter`, `metas`, `theme`) e localStorage `focoapp_*` estão **congeladas**: o v2 nunca lê nem escreve. Snapshot no Supabase: **`backup.foco_state_v1_20260919`** (schema `backup`, só service_role).
+- ⚠️ **Regra de ouro do sync (implementada):** só grava depois de um **pull bem-sucedido** (`pulledOk`); toda subida **relê a nuvem e faz merge** antes do upsert (`subir()`); merge por `_t` (plano/ajustes por objeto, registros **por dia**); semente `_t:0` perde para qualquer edição real; valida antes de subir (plano com pilares e hábitos, registros objeto, ajustes com `inicio`) e **aborta** se inválido; instâncias na mesma origem (aba, iframe do HUB, PWA) se juntam via `storage`/`juntarLS`.
 
-## Supabase (compartilhado com o HUB Pessoal)
-- **Mesmo projeto** do HUB: `jlouesrrmqeauzlgvrpw` · URL `https://jlouesrrmqeauzlgvrpw.supabase.co`.
-- Chave anon (publishable, pode ficar no HTML público): `sb_publishable_ulG1woVG1p1Seax63GGYPQ_PG6-8l-G`.
-- Tabela própria: **`foco_state`** — linhas `(user_id, key, value, updated_at)`, `upsert` com `onConflict:'user_id,key'`. Chaves: `habits`, `logs`, `counter`, `metas`, `theme`. (**`metas`** é a chave das metas anuais — aditiva; RLS `own_rows` cobre qualquer chave.)
-- O HUB grava em `hub_state` (tabela diferente) — **não se atropelam**. Auth (e-mail/senha) é a mesma conta nos dois.
+## Supabase (compartilhado com o HUB)
+- Projeto `jlouesrrmqeauzlgvrpw` · URL `https://jlouesrrmqeauzlgvrpw.supabase.co` · chave anon publishable no HTML.
+- `foco_state` (RLS `own_rows`), `foco_push_subs` (assinaturas de push, RLS `own_push_subs`).
+- Edge Functions: **`foco-cron-push`** (v2: lembrete da noite inteligente, `verify_jwt=false` + header `x-cron-key`; chamada a cada minuto pelo `pg_cron` job `foco-push-tick`) e **`foco-send-push`** (botão "Enviar teste", `verify_jwt=true`). **Fonte das funções fica FORA do git** (tem VAPID privada e cron-key embutidas; ideal mover para secrets do Supabase).
 
-## Modelo de dados (schema dos hábitos — diferente do HUB de propósito)
-- **Hábito** (`habits[]`): `id, nome, icon, cor, cat, tipo, periodo, alvo, unidade, rotulo, tom, tomCustom, atalhos, items, substr, desde, dias`. **`dias`** = array `0..6` (0=dom…6=sáb), agendamento por dia da semana (aditivo, opcional; alimenta a vista Semana e filtra o Hoje via `expectedToday`). Vazio/ausente = comportamento antigo.
-- **Log** (`logs[]`): `t` (data/timestamp), `feito`, `valor`, `hora`, `items`, `recaida`, `s`. *(tom "personalizado"/`tomCustom` foi removido — só `padrao`/`evitar`.)*
-- **Meta anual** (`metas[]`): `id, hid` (id do hábito de origem), `comp`, `meta`, `sup` (**Compromisso/Meta/Superação**, totais do ano). Agregada por ano com janela **a partir do início real** (`anoStartMonth()` = 1º mês com ≥7 dias de registro; prorateia a meta). Funções: `renderMetas`, `metaState`, `anoAgg`, `criarTodasMetas`, `anualAlvo`, `subirMeta`. **Não** afeta o HUB (o dashboard do HUB não lê a chave `metas`). Detalhes no HANDOFF.md.
-- `counter` = contador incremental de IDs. `theme` = tema atual.
-- Funções-base: `migrate()` (sobe versões antigas), `normalizeGrouped()` (normaliza), `recount()` (recalcula), `save()`/`load()`, `applyTheme()`/`curTheme()`, `enter()` (entra no dia).
+## Domínio (`equilibrio.js`) — fonte única da regra
+- `EQ.seed`, datas (`iso/hoje/addDias/diffDias/inicioSemana`), `cumprimentoHabito/Pilar/Geral`, `serie`, **`pontuacao`**, `progresso`, `sugestao`, `revisaoRotinaDevida`, **`mergeEstado`**, `resumo`, `_selfTest()` (98 asserções; rode no console: `EQ._selfTest()`).
+- **O HUB carrega este arquivo** (`https://dkonrad88.github.io/Foco/equilibrio.js`) em vez de portar funções. Mudou a regra aqui → HUB acompanha sozinho. Mudou o **formato** → atualizar `CONTRATO.md`, o módulo `FOCO` do HUB e a `foco-cron-push`.
+- SW: `equilibrio.js` é **network-first** (Foco `foco-v3` e HUB `hub-v36`). Cada SW só apaga caches com o próprio prefixo (a origem é compartilhada pela suíte).
 
-## Relação com o HUB Pessoal (acoplamento intencional)
-- O **HUB lê a tabela `foco_state` direto** e renderiza um **dashboard desktop próprio** (módulo `FOCO` no `index.html` do hubpessoal, container `#focoDash`). **Read-only** — só o Foco grava. Versão anterior usava iframe; foi substituída por render nativo desktop (o usuário quer ver no Mac, não a telinha mobile).
-- ⚠️ **Acoplamento de schema:** o HUB **porta verbatim** as funções de domínio do Foco (`inPeriod, isDoneLog, metaProgress, metaLine, cleanStreak, streakSoft, expectedToday, cadence, catOrder…`) e os campos do hábito/log (`tipo/tom/periodo/alvo/unidade/cat/desde` · log `valor/feito/items/recaida`). **Se mudar o schema de hábito/log ou essas funções aqui no Foco, o dashboard do HUB pode divergir** — avisar/replicar no `FOCO` do hubpessoal. ⚠️ **Pendência conhecida (2026-07-27):** o Foco agora usa **`h.dias`** em `expectedToday` (agendamento por dia). O HUB tem a `expectedToday` **antiga** (sem `dias`) — não quebra (campo extra é ignorado), mas o "hoje" do HUB pode mostrar um hábito a mais que o Foco já filtrou por dia. Replicar `hasDias`+regra no HUB quando quiser alinhar. A leitura é `sb.from('foco_state').select('key,value')` com chaves `habits`(array)/`logs`(objeto data→id)/`counter`.
-- **O Foco é a fonte única de hábitos.** O tracker antigo do HUB (`ht*`) foi aposentado.
-- Login: mesmo Supabase/origin → a sessão do HUB já autentica a leitura de `foco_state` (mesma conta).
+## Relação com o HUB Pessoal
+- Módulo **`var FOCO`** no `index.html` do hubpessoal (container `#focoDash`, aberto pelo `EMBED` na view "Resumo" da página `habits`): **read-only**, lê `v2_plano/v2_registros/v2_ajustes`, calcula com `EQ` e mostra **Pontuação + curva**, **Semáforo semanal** (6 semanas + hoje) e **Roda da vida**. A view "Trabalhar no app" é o iframe do próprio Foco.
 
-## Fluxo entre as duas máquinas
+## Ambiente / fluxo entre máquinas
 - Usuário diz **"tô no PC da Empresa"** ou **"tô no Mac"**. **Mac (casa)** = máquina canônica.
-- **Ao começar:** `git pull` + ler este CLAUDE.md. **Ao terminar:** atualizar o "Log de handoff", `git add -A && git commit && git push`.
-- Edição pelo app Claude Code (aba Code), nunca pelo Codespace. ⚠️ No Windows, salvar `index.html` sempre em **UTF-8** (evita mojibake).
+- PC da Empresa: **sem node e sem python** (o `python` é stub) → **perl** para scripts; `pdftotext` em `/mingw64/bin`. Git com `autocrlf=true` (working copy CRLF, repo LF — normal).
+- Validar: balanço `{}()[]`, zero mojibake (`Ã`), ES5 no app/`equilibrio.js`, e **rodar no navegador** (`EQ._selfTest()` + abrir o app sem login).
+- Publicar: bump do `CACHE` no `sw.js` (`foco-vN`), commit + push (Pages publica sozinho). Usuário testa no iPhone via "Atualizar app".
 
 ## Log de handoff (a sessão mais recente escreve no topo)
-- **2026-08-13 — Mac — Modo "Você" + notificações push:** sessão grande de **engajamento** (o usuário não tava usando o app — "não tenho motivo pra abrir"). Entregue: (1) **modo "Você"** — a aba Foco abre num espelho das **4 identidades** dele (atleta/fé/parceiro/evolui), cada card com streak+status+hábitos marcáveis; toggle virou Você·Hoje·Semana (`renderVoce`, `IDENTS`, `focoView='voce'` default). (2) Antes: **Vista Semana** + **agendamento por dia** (`h.dias`) + **marcar da Semana**. (3) **Push no iPhone** funcionando (piloto confirmado) + **lembretes por horário** (`h.remind` + Edge Functions `foco-send-push`/`foco-cron-push` + `pg_cron`). Ver HANDOFF.md p/ tudo. Schema do hábito ganhou `dias` e `remind` (aditivos).
-- **2026-07-27 — Mac — Vista Semana + agendamento por dia:** nova **sub-aba Semana** dentro de Foco (toggle `focoView` Hoje⇄Semana, `renderWeekView`) e campo **`h.dias`** (dias fixos da semana, seletor no editor do hábito). Resolve a procrastinação dos hábitos de frequência: dá *quando* + visão da semana inteira de antemão. `expectedToday` passou a respeitar `dias` (retrocompatível). Testado no navegador (0 erro). ⚠️ **Divergência com HUB sinalizada** (expectedToday/dias — ver seção acima), **não replicada**. Metas anuais seguem pendentes de validação do usuário. Detalhes: HANDOFF.md.
-- **2026-07-06 — Mac — Sessão grande + criado `HANDOFF.md`:** o app virou **só-Lista** (modo card removido), ganhou **PWA instalável**, **identidade da suíte** (Inter, azul `#185FA5`/teal `#1a7a8a`, dark padrão, Copa/bandeira removidos), "Atualizar app" em Ajustes, e a feature nova **Metas anuais** (aba Metas, chave `metas` no `foco_state`, níveis Compromisso/Meta/Superação, janela a partir do início real do registro). Também: removido tom Personalizado; Insights limitado a 5; skill de usuário `phone-frame`. **O estado atual e os próximos passos passaram a viver no `HANDOFF.md` — leia lá primeiro.** Último commit: `0ef2366`.
-- **2026-06-21 — Mac (casa) — Criado este CLAUDE.md:** primeira memória compartilhada do Foco. Contexto: o **HUB Pessoal passou a embutir o Foco** (iframe na aba Habit Tracker) — ver seção "Relação com o HUB". Mapeados aqui: estrutura (3 abas foco/habitos/insights), dados (`foco_state` no Supabase `jlouesrrmqeauzlgvrpw`, localStorage prefixo `focoapp_`), schema de hábito/log, e o acoplamento com o HUB. Nada de código mudou nesta sessão do lado do Foco — só documentação.
+- **2026-09-19 — PC da Empresa — 🔄 REESTRUTURAÇÃO v2 "Equilíbrio" (reescrita completa):** o usuário não usava o app (esquecia de abrir + 37 hábitos pesavam). Fizemos um questionário (9 + 31 + 11 perguntas) → **7 pilares**, hábitos de 1 toque, ritual à noite, **Pontuação de Equilíbrio** (EWMA τ=42 sobre cumprimento vs. plano), semáforo + roda da vida, estados ativo/espera/rotina, modo viagem = plano mínimo, push só se o dia estiver aberto. Layout escolhido entre 5 mockups: **Modelo 1** (abas Hoje · Equilíbrio · Pilares) com a roda da vida no fim da aba Equilíbrio. **Histórico v1 não aparece no app novo** (pedido do usuário); chaves v1 congeladas + backup `backup.foco_state_v1_20260919`. Novo `equilibrio.js` compartilhado com o HUB; módulo `FOCO` do HUB reescrito; `foco-cron-push` v2 (lembretes por hábito aposentados). Contrato em `CONTRATO.md`. Construído via workflow multiagente (domínio → app/HUB/push em paralelo → 5 revisores + verificação → correções) e testado no navegador (self-test 98/98, telas, viagem, navegação de datas, **sync contra nuvem simulada**: aparelho novo, merge com outro aparelho, nuvem mais nova vence semente, estado inválido aborta).
+- **2026-08-13 — Mac — Modo "Você" + notificações push** (v1, substituído pelo v2).
+- **2026-07-27 — Mac — Vista Semana + agendamento por dia** (v1, substituído pelo v2).
+- **2026-07-06 — Mac — PWA, identidade da suíte, Metas anuais** (v1; metas anuais removidas no v2).
+- **2026-06-21 — Mac — Criado este CLAUDE.md** (v1).

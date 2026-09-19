@@ -2,11 +2,12 @@
    Estratégia segura para um app single-file que muda com frequência:
    - Navegação (abrir o app): network-first -> sempre pega o index.html mais novo quando online;
      se estiver offline, cai no cache (app abre mesmo sem internet).
+   - equilibrio.js (domínio do v2): network-first também, com fallback pro cache.
    - Supabase (dados do usuário): NUNCA passa pelo cache. Sempre rede.
    - Demais GET (CDNs: fontes, ícones Tabler, supabase-js): stale-while-revalidate.
    Bump CACHE quando quiser forçar limpeza do cache antigo. */
-var CACHE = 'foco-v2';
-var SHELL = ['./', './index.html', './manifest.json',
+var CACHE = 'foco-v3';
+var SHELL = ['./', './index.html', './equilibrio.js', './manifest.json',
              './apple-touch-icon.png', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', function (e) {
@@ -21,7 +22,8 @@ self.addEventListener('install', function (e) {
 self.addEventListener('activate', function (e) {
   e.waitUntil(
     caches.keys().then(function (keys) {
-      return Promise.all(keys.map(function (k) { if (k !== CACHE) return caches.delete(k); }));
+      // Só apaga caches do próprio Foco: a origem é compartilhada com o HUB e os outros apps da suíte.
+      return Promise.all(keys.map(function (k) { if (k !== CACHE && k.indexOf('foco-') === 0) return caches.delete(k); }));
     }).then(function () { return self.clients.claim(); })
   );
 });
@@ -43,6 +45,22 @@ self.addEventListener('fetch', function (e) {
         return res;
       }).catch(function () {
         return caches.match('./index.html').then(function (m) { return m || caches.match('./'); });
+      })
+    );
+    return;
+  }
+
+  // Domínio (equilibrio.js): network-first igual à navegação, para app e cálculo andarem juntos.
+  if (url.origin === self.location.origin && /\/equilibrio\.js$/.test(url.pathname)) {
+    e.respondWith(
+      fetch(req).then(function (res) {
+        if (res && res.status === 200) {
+          var copy = res.clone();
+          caches.open(CACHE).then(function (c) { c.put('./equilibrio.js', copy); });
+        }
+        return res;
+      }).catch(function () {
+        return caches.match('./equilibrio.js');
       })
     );
     return;
