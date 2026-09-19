@@ -105,7 +105,7 @@ const p = EQ.pontuacao({ plano: m.v2_plano, registros: m.v2_registros || {}, aju
 ```
 Sem `v2_plano` = o Foco v2 ainda não foi aberto.
 
-## Push (Edge Function `foco-cron-push`, pg_cron a cada minuto)
+## Push (Edge Function `foco-cron-push`, pg_cron a cada minuto) — fonte em `edge/foco-cron-push/index.ts`
 Lê `v2_ajustes` (`pushOn`, `pushHora`), `v2_registros[hoje]` e `v2_resumo`. Envia **uma** notificação por noite no horário,
 **só se o dia ainda estiver aberto**: "Dia ainda aberto · <pilar mais fraco> em <valor> esta semana". Sem `v2_ajustes` → nada.
 Os lembretes por hábito da v1 (`habits[].remind`) foram aposentados.
