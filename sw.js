@@ -6,7 +6,7 @@
    - Supabase (dados do usuário): NUNCA passa pelo cache. Sempre rede.
    - Demais GET (CDNs: fontes, ícones Tabler, supabase-js): stale-while-revalidate.
    Bump CACHE quando quiser forçar limpeza do cache antigo. */
-var CACHE = 'foco-v3';
+var CACHE = 'foco-v4';
 var SHELL = ['./', './index.html', './equilibrio.js', './manifest.json',
              './apple-touch-icon.png', './icon-192.png', './icon-512.png'];
 

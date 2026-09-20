@@ -5,7 +5,10 @@
 > Fluxo: `git pull` no início · editar → `git add -A && commit && push origin main` (Pages publica sozinho).
 
 App no ar: **https://dkonrad88.github.io/Foco/** · Repo: `github.com/dKonrad88/Foco` (`main`).
-Última sessão: **2026-09-19 (PC da Empresa)**.
+Última sessão: **2026-09-20 (Mac)** — correção: dia fechado agora trava a edição (ver "Correções" abaixo). Reestruturação v2: **2026-09-19 (PC da Empresa)**.
+
+## 🔧 Correções pós-v2
+- **2026-09-20 (Mac) — dia fechado passou a travar a edição:** o usuário notou que, mesmo após "Fechar o dia" (`_f`), ainda dava pra marcar/desmarcar. Agora `toggleCheck`/`setNota` abortam com toast quando `diaTravado(diaVer)` (helper: `_f` no registro do dia); as linhas do dia fechado ficam esmaecidas (`.row.trv`); o rótulo "Dia fechado" virou o **botão `data-a="reabrir"`** (ação `reabrir` → `reabrirDia`: remove `_f` + `subirJa`). Só o fechamento **explícito** (`_f`) trava — marcar hábitos normalmente NÃO trava (senão a 1ª marca travaria as próximas). Não mudou o formato dos dados (usa o `_f` que já existia) → HUB/CONTRATO/cron intactos. Testado no navegador (self-test 98/98, fluxo fechar→travar→reabrir→marcar). Cache `sw.js` → **`foco-v4`**.
 
 ---
 

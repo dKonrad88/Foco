@@ -124,7 +124,8 @@ button.row:active,button.lrow:active,button.prow:active{background:var(--surface
 .btn.dng{color:var(--danger);border-color:var(--danger);background:transparent}
 .fechar{width:100%;min-height:50px;margin-top:4px;border-radius:14px;border:1px dashed var(--border);color:var(--muted);font-weight:600;font-size:.9rem;display:flex;align-items:center;justify-content:center;gap:6px;text-align:center}
 .fechar:active{background:var(--surface2)}
-.fechar.done{border-style:solid;color:var(--green);cursor:default}
+.fechar.done{border-style:solid;color:var(--green);cursor:pointer}
+.row.trv,.row.trv .notas{opacity:.5}
 .pausados{font-size:.76rem;color:var(--muted);text-align:center;padding:2px 0 14px}
 .vazio{text-align:center;color:var(--muted);font-size:.85rem;padding:24px 12px;line-height:1.45}
 
@@ -399,7 +400,7 @@ function htmlHoje(){
   /* fechar o dia: o botão só some com o fechamento explícito (_f); para o push e o "ontem ficou aberto",
      qualquer marcação já conta como dia fechado (EQ.diaFechado) */
   if(dia&&dia._f){
-    h+='<div class="fechar done"><i class="ti ti-check"></i>Dia fechado</div>';
+    h+='<button class="fechar done" data-a="reabrir" data-id="'+ds+'"><i class="ti ti-lock"></i>Dia fechado · reabrir</button>';
   }else{
     h+='<button class="fechar" data-a="fechar" data-id="'+ds+'">'+(ehHoje?'Fechar o dia':(ds===ontem?'Fechar ontem':'Fechar este dia'))+'</button>';
   }
@@ -414,9 +415,9 @@ function htmlLinha(c,hb,ds,dia){
       var ativo=(sel!==null&&Math.abs(sel-vals[k])<1e-6);
       b+='<button class="nt'+(ativo?' on n'+k:'')+'" data-a="nota" data-id="'+esc(hb.id)+'" data-v="'+vals[k]+'" aria-label="'+nomes[k]+'"><i class="ti ti-'+ics[k]+'"></i></button>';
     }
-    return '<div class="row'+(on?' on':'')+'">'+tx+'<span class="notas">'+b+'</span></div>';
+    return '<div class="row'+(on?' on':'')+(dia&&dia._f?' trv':'')+'">'+tx+'<span class="notas">'+b+'</span></div>';
   }
-  return '<button class="row'+(on?' on':'')+'" data-a="check" data-id="'+esc(hb.id)+'" aria-pressed="'+(on?'true':'false')+'">'+tx+
+  return '<button class="row'+(on?' on':'')+(dia&&dia._f?' trv':'')+'" data-a="check" data-id="'+esc(hb.id)+'" aria-pressed="'+(on?'true':'false')+'">'+tx+
          '<span class="ck">'+(on?'<i class="ti ti-check"></i>':'')+'</span></button>';
 }
 
@@ -821,12 +822,15 @@ function mudaDia(ds,fn){
   S.registros[ds]=d;
   salvar('registros');
 }
+function diaTravado(ds){var d=S.registros[ds];return !!(d&&d._f);}
 function toggleCheck(id){
   var hb=habito(id);if(!hb)return;
+  if(diaTravado(diaVer)){toast('Dia fechado — toque em reabrir pra editar');return;}
   mudaDia(diaVer,function(d){if(EQ.registrado(hb,d))delete d[id];else d[id]=1;});
 }
 function setNota(id,v){
   var hb=habito(id);if(!hb||isNaN(v))return;
+  if(diaTravado(diaVer)){toast('Dia fechado — toque em reabrir pra editar');return;}
   mudaDia(diaVer,function(d){if(EQ.registrado(hb,d)&&Math.abs(+d[id]-v)<1e-6)delete d[id];else d[id]=v;});
 }
 function fecharDia(ds){
@@ -835,6 +839,12 @@ function fecharDia(ds){
   mudaDia(ds,function(d){d._f=1;});
   subirJa();   // sem debounce: fechar e sair logo em seguida não pode deixar a nuvem sem o _f (vale também para "Não fiz nada")
   toast(P?'Dia fechado · Equilíbrio '+P.valor:'Dia fechado');
+}
+function reabrirDia(ds){
+  if(!ds||!diaTravado(ds))return;
+  mudaDia(ds,function(d){delete d._f;});
+  subirJa();
+  toast('Dia reaberto');
 }
 
 /* ===== salvar (local primeiro; nuvem só depois de puxar) ===== */
@@ -1176,6 +1186,7 @@ var ACOES={
   check:function(id){toggleCheck(id);},
   nota:function(id,el){setNota(id,+el.getAttribute('data-v'));},
   fechar:function(ds){fecharDia(ds);},
+  reabrir:function(ds){reabrirDia(ds);},
   rotinaOk:function(){rotinaOk();},
   ativarH:function(id){ativarHabito(id);},
   ativarP:function(id){ativarPilar(id);},
